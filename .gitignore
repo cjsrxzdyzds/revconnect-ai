@@ -1,0 +1,28 @@
+# Local Python environment (2.3 GB, includes the Playwright Chromium download)
+.venv/
+__pycache__/
+*.pyc
+
+# Generated at run time by run_local.py: extracted knowledge base, FAISS index,
+# chunk CSVs, CampusGroups snapshots, evaluation output, refresh manifest.
+.revconnect_local/
+RevConnectAI_v5_API_Prototype/cache/
+
+# Never commit a real credential. The CampusGroups feeds are public and need
+# none, but keep this here so a future .env cannot be added by accident.
+.env
+.env.local
+!.env.example
+
+# Internal GW documents; kept local, not published.
+RevConnectAI_v5_Boss_Report.docx
+RevConnectAI_v5_Boss_Presentation.pptx
+Phase-by-Phase Implementation Plan.docx
+
+# GW institutional documents are not redistributed from this public repo.
+# Supply your own copies in RevConnectAI_Knowledge_Base_v4/ to run the notebook
+# (see README.md). The derived CSVs are kept; the source PDFs are not.
+*.pdf
+RevConnectAI_v5_API_Prototype/RevConnectAI_Knowledge_Base_v4.zip
+
+.DS_Store

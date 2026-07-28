@@ -1,0 +1,85 @@
+REVCONNECTAI V5 API PROTOTYPE
+
+v5.1 - 2026-07-28
+The CampusGroups integration shipped in v5.0 never actually connected. Every
+run fell back to the bundled 12-row starter directory while reporting itself as
+API-enabled. Four defects caused this; all are fixed and the connection is now
+verified live (722 organizations, 22 upcoming events).
+
+Fixed
+- Tenant. The client targeted https://www.campusgroups.com, the vendor's global
+  tenant, which serves no GW records. base_url is now derived from school_code
+  as https://<school_code>.campusgroups.com. school_code was previously declared
+  in the config and never used in a request.
+- Credential. The rss_groups and rss_events feeds are public. The client refused
+  to issue a request without a credential, and sending an invalid
+  X-CG-API-Secret header turns an HTTP 200 into a 403 - so configuring a
+  credential was what broke the connection. The header is now sent only when a
+  credential is configured, and no credential is required.
+- Organization filter. normalize_groups() excluded every record with closed=1.
+  In CampusGroups that flag means closed membership, not a defunct group; it
+  discarded 702 of GW's 722 published organizations, including all five Muslim
+  organizations the demo is built around. The flag is now retained as the
+  membership_closed column instead of being used to exclude.
+- Event filter. The events request hardcoded privacy_level=0, which the feed
+  honours server-side, and normalize_events() filtered on it a second time.
+  That reduced 22 upcoming events to 5. Allowed levels are now configurable via
+  CampusGroupsConfig.allowed_event_privacy_levels and default to 0 (public) and
+  1 (authenticated campus community). Confirm the production meaning of each
+  level with GW.
+
+Changed
+- merge_organization_sources() now enriches rather than replaces. The live feed
+  is authoritative for which organizations exist and for their CampusGroups
+  links, but it carries mission text for only 16 of 722 records. Curated
+  descriptions, categories, and keywords are kept whenever the live record has
+  none of its own, so live data no longer overwrites richer bundled text with a
+  placeholder.
+- Live records without mission text get a generated description and a keyword
+  string seeded from the name and acronym, so they remain searchable.
+- Organization category no longer falls back to groupType silently. groupType is
+  GW's funding-pathway label ("Student Organization (Blue Line)"), not a topical
+  category; the fallback is tracked so curated categories win.
+- Starter directory links moved from legacy gwu.campuslabs.com/engage URLs to
+  current gwu.campusgroups.com links, resolved against the live feed.
+- Event records carry a visibility of "Everyone" or "GW campus community".
+- CampusGroupsStatus reports used_credential and names the endpoint host.
+
+Added
+- run_local.py runs the notebook outside Colab: /content is redirected to
+  ./.revconnect_local and Gradio binds 127.0.0.1:7899 instead of opening a
+  public share tunnel.
+- sync_notebook.py regenerates the notebook's inlined copy of the API client
+  from campusgroups_api_client.py, which is now the single source of truth.
+  --check fails if the two have drifted.
+- api_connection_smoke_test.py reports the endpoint host and whether a
+  credential was sent, and fails if zero organizations parse.
+
+Verified on 2026-07-28
+- Live connection: 722 organizations, 22 upcoming events, no credential.
+- Full notebook run: 226 PDF pages, 1010 knowledge records, 1368 chunks.
+- Built-in evaluation: 7/7 intent accuracy, 7/7 expected-behavior accuracy.
+
+v5.0
+Added
+- Read-only CampusGroups RSS client.
+- Colab Secrets/environment credential loading.
+- rss_groups and rss_events connections.
+- XML and JSON response parsing with normalized schemas.
+- Privacy filters and deleted/hidden/private record exclusions.
+- Retry, timeout, error handling, and non-crashing fallback behavior.
+- Credential-free CSV snapshots for groups and public events.
+- Live organization and event recommendation indexes.
+- Event Discovery intent and grounded event results.
+- Live CampusGroups Gradio tab with status, refresh, org search, and event search.
+- API status fields in the refresh manifest.
+- Mock parser/normalizer validation.
+
+Changed
+- Live CampusGroups organization data takes priority over bundled starter rows.
+- API operational data is kept separate from policy authority.
+- v4 placeholder methods and disabled flag were replaced.
+
+Security
+- No credential is stored in the notebook, module, cache, guide, or bundle.
+- Only read-only group and public-event endpoints are enabled.

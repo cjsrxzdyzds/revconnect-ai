@@ -1,0 +1,12 @@
+sentence-transformers
+faiss-cpu
+transformers
+accelerate
+sentencepiece
+gradio
+pypdf
+pandas
+openpyxl
+beautifulsoup4
+requests
+urllib3

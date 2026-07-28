@@ -1,0 +1,80 @@
+REVCONNECTAI V5 API PROTOTYPE SETUP
+
+1. CREDENTIALS: NONE REQUIRED
+   The CampusGroups rss_groups and rss_events feeds are public. RevConnectAI
+   reads them anonymously and no credential needs to be configured.
+
+   Do not set CG_API_KEY or CG_API_SECRET unless GW issues a real secret for
+   these feeds. The feeds answer an anonymous request with HTTP 200 but reject
+   an unrecognized X-CG-API-Secret header with HTTP 403, so a stale or invalid
+   value breaks a connection that would otherwise work. RevConnectAI sends the
+   header only when one of those variables is set.
+
+   Any credential previously pasted into chat should still be rotated or
+   revoked as a hygiene matter. It is not needed to run the prototype.
+
+2. CHOOSE THE TENANT
+   Feeds are served per school at https://<school_code>.campusgroups.com.
+   RevConnectAI defaults to school_code "gwu" and derives the base URL from it.
+   www.campusgroups.com is the vendor's global tenant and returns no GW records.
+
+3. RUN IT LOCALLY (no Colab needed)
+      python3 -m venv .venv
+      .venv/bin/pip install -r RevConnectAI_v5_API_Prototype/requirements.txt
+      .venv/bin/python run_local.py          # build the index, run the tests
+      .venv/bin/python run_local.py --ui     # also serve the Gradio app
+
+   run_local.py executes the notebook's code cells with the Colab-only bits
+   patched: the /content project directory is redirected to ./.revconnect_local
+   and Gradio binds 127.0.0.1:7899 instead of opening a public share tunnel.
+
+4. OR RUN IT IN GOOGLE COLAB
+   Open RevConnectAI_Full_Student_Engagement_Assistant_v5_API.ipynb, run from
+   the top, and upload RevConnectAI_Knowledge_Base_v4.zip when prompted.
+
+   The notebook will:
+   - connect to the read-only rss_groups and rss_events feeds for the tenant;
+   - request published organizations and upcoming events;
+   - exclude deleted, hidden, cancelled, rejected, and private records;
+   - cache normalized snapshots without any credential;
+   - merge live organizations with the bundled fallback directory, keeping
+     curated descriptions where the live record has no mission text;
+   - build organization and event recommendation indexes;
+   - continue using bundled/cached data if the connection fails.
+
+5. VERIFY THE CONNECTION
+   Run the smoke test:
+      cd RevConnectAI_v5_API_Prototype && python api_connection_smoke_test.py
+
+   Expected (as of 2026-07-28):
+      Connected live: True
+      Sent a credential: False
+      Data source: live CampusGroups RSS API
+      Organizations: 722
+      Upcoming events: 22
+
+   The Gradio app's "Live CampusGroups" tab shows the same status.
+
+6. EDITING THE API CLIENT
+   campusgroups_api_client.py is the single source of truth. The notebook
+   inlines it so it stays self-contained in Colab. After changing the module:
+      python sync_notebook.py           # regenerate the notebook cell
+      python sync_notebook.py --check   # verify they match
+
+DATA SCOPE
+The prototype does not request users, memberships, officers, attendees,
+transactions, payments, or write APIs.
+
+By default it surfaces events at privacyLevel 0 (public) and 1 (authenticated
+campus community), which is RevConnectAI's audience. Confirm the production
+meaning of each level with GW. To restrict to public-only events, set
+allowed_event_privacy_levels=("0", "Everyone") on CampusGroupsConfig.
+
+Note that "closed" on an organization record means closed membership, not a
+defunct organization. It must not be used to exclude organizations; 702 of
+GW's 722 published organizations are marked closed.
+
+IMPORTANT
+RevConnectAI provides guidance, not final funding, purchasing, contract,
+reimbursement, travel, event, or policy decisions. Current GW policy and
+authorized staff control.
