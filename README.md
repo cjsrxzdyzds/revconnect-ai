@@ -31,6 +31,39 @@ python3 -m venv .venv
 .venv/bin/python run_local.py --ui     # also serve the interface on 127.0.0.1:7899
 ```
 
+## Cloudflare deployment
+
+The free web edition lives in `public/` and is configured as a Cloudflare Worker
+with static assets at `cjsrxzdyzds.com`. It keeps organization search, public
+event discovery, published how-to and funding guidance, a budget estimate, and
+an application draft. Its question box ranks matching public records; it does
+not run the notebook's local language or embedding models. The original
+Python/Gradio prototype remains available through `run_local.py`.
+
+The organization directory and fallback event list are sanitized snapshots in
+`public/data.json`. The Worker fetches up to 60 nearest public events from the
+CampusGroups RSS feed and returns only the fields the page displays. The page
+shows when data was checked and links users to RevConnect and official guidance.
+No CampusGroups credential is required. The five source policy PDFs are absent
+from this repository, so the web edition does not make page-cited policy claims.
+
+To refresh the public snapshots and deploy:
+
+```bash
+npm ci
+npx wrangler login
+npm run refresh-data
+npm run deploy
+```
+
+`npm run refresh-data` reads only published organization and public event RSS
+fields. If its upstream feed is unavailable, keep the existing `public/data.json`
+and run `npm run deploy`. After deployment, visit `https://cjsrxzdyzds.com/`
+and test one search, one budget, and the event feed. The free Workers tier has
+[request and CPU limits](https://developers.cloudflare.com/workers/platform/limits/);
+the website is designed to stay within them by serving most content as static
+assets.
+
 `run_local.py` executes the notebook's code cells outside Colab: the `/content`
 project directory is redirected to `./.revconnect_local`, and Gradio binds
 localhost instead of opening a public share tunnel. The notebook itself still

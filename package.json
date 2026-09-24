@@ -1,0 +1,13 @@
+{
+  "name": "revconnect-ai-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "refresh-data": "python3 scripts/build_web_data.py --refresh-live",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

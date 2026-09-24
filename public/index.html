@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#082e49" />
+    <meta name="description" content="RevConnectAI helps GW students explore organizations, public events, funding guidance, and event planning resources." />
+    <title>RevConnectAI · Student engagement at GW</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="RevConnectAI home">
+          <span class="brand-mark" aria-hidden="true">R<span>•</span></span>
+          <span>RevConnect<span class="brand-ai">AI</span></span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="#ask">Ask</a>
+          <a href="#discover">Discover</a>
+          <a href="#guidance">Guidance</a>
+          <a href="#plan">Plan an event</a>
+        </nav>
+        <a class="header-link" href="https://revconnect.gwu.edu/" target="_blank" rel="noopener noreferrer">Official RevConnect <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="shell hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-line"></span> GW STUDENT ORGANIZATION SUPPORT</div>
+            <h1>Good ideas start<br /><em>with a next step.</em></h1>
+            <p>Explore student groups and public events. Find published guidance for funding, deadlines, and the details that make an event possible.</p>
+            <div class="hero-actions">
+              <a class="button button-buff" href="#ask">Ask a question <span aria-hidden="true">→</span></a>
+              <a class="button button-outline" href="#discover">Explore campus <span aria-hidden="true">↗</span></a>
+            </div>
+            <p class="hero-footnote">A planning aid, not an approval system. Always confirm current requirements with GW and the SGA.</p>
+          </div>
+          <aside class="hero-card" aria-label="Ways to get started">
+            <div class="hero-card-label">WHERE WOULD YOU LIKE TO START?</div>
+            <a href="#discover"><span class="step-icon">01</span><span><strong>Find your people</strong><small>Browse public student organizations</small></span><span aria-hidden="true">↗</span></a>
+            <a href="#discover-events"><span class="step-icon">02</span><span><strong>See what is happening</strong><small>Upcoming public campus events</small></span><span aria-hidden="true">↗</span></a>
+            <a href="#guidance"><span class="step-icon">03</span><span><strong>Understand the process</strong><small>Funding and policy starting points</small></span><span aria-hidden="true">↗</span></a>
+            <a href="#plan"><span class="step-icon">04</span><span><strong>Make a plan</strong><small>Budget and application draft tools</small></span><span aria-hidden="true">↗</span></a>
+          </aside>
+        </div>
+        <div class="hero-rule"></div>
+      </section>
+
+      <div class="status-strip">
+        <div class="shell status-inner">
+          <span class="status-label"><span class="status-dot"></span> PUBLIC DATA, READ ONLY</span>
+          <span id="group-status">Loading organization directory…</span>
+          <span id="event-status">Checking public event feed…</span>
+        </div>
+      </div>
+
+      <section class="section section-ask" id="ask">
+        <div class="shell">
+          <div class="section-heading"><div><div class="kicker">01 / ASK</div><h2>Start with a question.</h2><p>Search the published guidance and the public directory. Results link to the source so you can verify the latest rule.</p></div></div>
+          <form id="ask-form" class="ask-form">
+            <label class="sr-only" for="ask-input">Your question</label>
+            <input id="ask-input" type="search" placeholder="e.g. How early should we request co-sponsorship?" maxlength="300" required />
+            <button type="submit" class="button button-blue">Find guidance <span aria-hidden="true">→</span></button>
+          </form>
+          <div class="prompt-row"><span>Try asking</span><button type="button" data-question="How do I create an event?">Creating an event</button><button type="button" data-question="When is co-sponsorship due?">Co-sponsorship timing</button><button type="button" data-question="Where can I get help with reimbursements?">Reimbursement help</button></div>
+          <div id="ask-results" class="result-panel" aria-live="polite"><div class="empty-state">Your source-backed results will appear here.</div></div>
+        </div>
+      </section>
+
+      <section class="section section-discover" id="discover">
+        <div class="shell">
+          <div class="section-heading"><div><div class="kicker">02 / DISCOVER</div><h2>Find your place on campus.</h2><p>Search public RevConnect listings. Open a result to see its current details and membership options.</p></div></div>
+          <div class="discover-grid">
+            <div class="panel" id="discover-groups">
+              <div class="panel-heading"><div><span class="panel-overline">STUDENT ORGANIZATIONS</span><h3>Find a group</h3></div><span id="group-count" class="count-pill">—</span></div>
+              <label class="sr-only" for="group-search">Search groups</label>
+              <input id="group-search" class="search-field" type="search" placeholder="Search by name, interest, or category" maxlength="120" />
+              <div id="group-results" class="listing" aria-live="polite"></div>
+              <p class="panel-note" id="group-note"></p>
+            </div>
+            <div class="panel" id="discover-events">
+              <div class="panel-heading"><div><span class="panel-overline">PUBLIC EVENTS</span><h3>What's coming up</h3></div><span id="event-count" class="count-pill">—</span></div>
+              <label class="sr-only" for="event-search">Search events</label>
+              <input id="event-search" class="search-field" type="search" placeholder="Search by event, host, or interest" maxlength="120" />
+              <div id="event-results" class="listing" aria-live="polite"></div>
+              <p class="panel-note" id="event-note"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-guidance" id="guidance">
+        <div class="shell">
+          <div class="section-heading"><div><div class="kicker">03 / GUIDANCE</div><h2>Know the process.</h2><p>A quick entry point to published information. Dates and eligibility can change; check the linked official source before acting.</p></div></div>
+          <div class="guidance-grid">
+            <div class="panel"><div class="panel-heading"><div><span class="panel-overline">FUNDING</span><h3>Funding programs</h3></div></div><div id="funding-list" class="guidance-list"></div></div>
+            <div class="panel"><div class="panel-heading"><div><span class="panel-overline">DEADLINES</span><h3>Plan ahead</h3></div></div><label class="sr-only" for="deadline-search">Search deadlines</label><input id="deadline-search" class="search-field" type="search" placeholder="Search a process or deadline" maxlength="120" /><div id="deadline-list" class="guidance-list"></div></div>
+            <div class="panel"><div class="panel-heading"><div><span class="panel-overline">REVCONNECT HOW-TO</span><h3>Using CampusGroups</h3></div></div><div id="howto-list" class="guidance-list"></div></div>
+            <div class="panel"><div class="panel-heading"><div><span class="panel-overline">CAMPUS SUPPORT</span><h3>Who can help</h3></div></div><div id="resource-list" class="guidance-list"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-plan" id="plan">
+        <div class="shell">
+          <div class="section-heading"><div><div class="kicker">04 / PLAN</div><h2>Turn an idea into a plan.</h2><p>Use these estimates and drafts as starting points. They do not submit a request or guarantee funding.</p></div></div>
+          <div class="tool-grid">
+            <div class="panel tool-panel">
+              <div class="panel-heading"><div><span class="panel-overline">EVENT BUDGET</span><h3>Estimate the cost</h3></div></div>
+              <form id="budget-form" class="form-grid">
+                <label>Expected attendance<input name="attendees" type="number" min="0" max="100000" value="50" required /></label>
+                <label>Food<select name="food"><option value="snacks">Snacks / refreshments</option><option value="meal">Meal</option><option value="none">No food</option></select></label>
+                <label>Supplies per person ($)<input name="supplies" type="number" min="0" step="0.01" value="5" /></label>
+                <label>Marketing ($)<input name="marketing" type="number" min="0" step="0.01" value="100" /></label>
+                <label>Venue ($)<input name="venue" type="number" min="0" step="0.01" value="0" /></label>
+                <label>Speaker / performer ($)<input name="speaker" type="number" min="0" step="0.01" value="0" /></label>
+                <label>A/V and travel ($)<input name="avTravel" type="number" min="0" step="0.01" value="0" /></label>
+                <label>Other costs ($)<input name="other" type="number" min="0" step="0.01" value="0" /></label>
+                <label>Contingency (%)<input name="contingency" type="number" min="0" max="100" step="0.1" value="10" /></label>
+                <button class="button button-blue form-submit" type="submit">Estimate budget <span aria-hidden="true">→</span></button>
+              </form>
+              <div id="budget-result" class="tool-result" aria-live="polite">Enter your event details to see a planning range.</div>
+            </div>
+            <div class="panel tool-panel">
+              <div class="panel-heading"><div><span class="panel-overline">APPLICATION DRAFT</span><h3>Outline a request</h3></div></div>
+              <form id="draft-form" class="form-grid">
+                <label>Organization<input name="organization" type="text" maxlength="120" placeholder="Your student organization" /></label>
+                <label>Event or project<input name="event" type="text" maxlength="120" placeholder="Event name" required /></label>
+                <label>Planned date<input name="date" type="date" /></label>
+                <label>Location<input name="location" type="text" maxlength="120" placeholder="Campus location" /></label>
+                <label>Expected attendance<input name="attendance" type="number" min="0" max="100000" value="50" /></label>
+                <label>Funding source<select name="source"><option>SGA Co-Sponsorship</option><option>SGA General Allocation</option><option>University-Wide Programs Fund</option><option>Other</option></select></label>
+                <label>Total estimated cost ($)<input name="total" type="number" min="0" step="0.01" value="0" /></label>
+                <label>Amount requested ($)<input name="requested" type="number" min="0" step="0.01" value="0" /></label>
+                <label class="wide">Purpose and student benefit<textarea name="purpose" rows="3" maxlength="1200" placeholder="What will students gain?" required></textarea></label>
+                <label class="wide">Audience<textarea name="audience" rows="2" maxlength="500" placeholder="Who is the event for?"></textarea></label>
+                <label class="wide">Accessibility plan<textarea name="accessibility" rows="2" maxlength="500" placeholder="How will you address participation needs?"></textarea></label>
+                <button class="button button-blue form-submit" type="submit">Create draft <span aria-hidden="true">→</span></button>
+              </form>
+              <div id="draft-result" class="tool-result" aria-live="polite">Your editable narrative will appear here. Nothing is sent or stored.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid"><div><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">R<span>•</span></span><span>RevConnect<span class="brand-ai">AI</span></span></a><p>Public information to help GW students explore and plan.</p></div><div><strong>Important</strong><p>RevConnectAI is an independent planning aid. It does not approve funding, purchases, contracts, reimbursements, travel, or events. Current GW policy and authorized staff control.</p></div><div><strong>Official resources</strong><a href="https://revconnect.gwu.edu/" target="_blank" rel="noopener noreferrer">RevConnect ↗</a><a href="https://students.gwu.edu/org-advising-support" target="_blank" rel="noopener noreferrer">Org Help ↗</a><a href="https://sga.gwu.edu/" target="_blank" rel="noopener noreferrer">GW SGA ↗</a></div></div>
+      <div class="shell footer-bottom"><span>RevConnectAI · Student engagement prototype</span><span>Source links open in a new tab · No account required</span></div>
+    </footer>
+  </body>
+</html>

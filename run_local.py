@@ -14,15 +14,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import shutil
 import sys
 import traceback
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent
-PROTOTYPE = Path("/home/oscar/Downloads/RevConnectAI/RevConnectAI_v5_API_Prototype")
+PROTOTYPE = REPO / "RevConnectAI_v5_API_Prototype"
 NOTEBOOK = PROTOTYPE / "RevConnectAI_Full_Student_Engagement_Assistant_v5_API.ipynb"
-LOCAL_HOME = Path("/home/oscar/Downloads/RevConnectAI/.revconnect_local")
+LOCAL_HOME = Path(os.environ.get("REVCONNECT_DATA_DIR", REPO / ".revconnect_local"))
+SERVER_HOST = os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1")
+SERVER_PORT = int(os.environ.get("GRADIO_SERVER_PORT", "7899"))
 
 # Cell-source rewrites: (pattern, replacement), applied to every code cell.
 # Patterns are regexes so small edits to the notebook cannot silently stop a
@@ -34,8 +38,8 @@ PATCHES = [
     # Do not open a public Gradio tunnel; bind a high local port instead.
     # Keeps **LAUNCH_KWARGS so the GW favicon survives the rewrite.
     (r'demo\.launch\([^)]*\)',
-     'demo.launch(share=False, debug=False, server_name="127.0.0.1", '
-     'server_port=7899, inbrowser=False, prevent_thread_lock=True, **LAUNCH_KWARGS)'),
+     f'demo.launch(share=False, debug=False, server_name="{SERVER_HOST}", '
+     f'server_port={SERVER_PORT}, inbrowser=False, prevent_thread_lock=True, **LAUNCH_KWARGS)'),
 ]
 
 
@@ -48,13 +52,17 @@ def display(*objects):
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--ui", action="store_true", help="launch the Gradio interface")
+    parser.add_argument("--serve", action="store_true", help="launch the UI without running notebook evaluation cells")
     parser.add_argument("--stop-at", type=int, default=None, help="last cell index to run")
     args = parser.parse_args()
 
     LOCAL_HOME.mkdir(parents=True, exist_ok=True)
+    knowledge_dir = LOCAL_HOME / "knowledge_base"
+    knowledge_dir.mkdir(parents=True, exist_ok=True)
+    for source in (REPO / "RevConnectAI_Knowledge_Base_v4").glob("*.csv"):
+        shutil.copy2(source, knowledge_dir / source.name)
     # The notebook's auto_locate_knowledge_sources() rglobs from cwd for the
     # knowledge-base ZIP, so run from the directory that ships it.
-    import os
     os.chdir(PROTOTYPE)
 
     notebook = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
@@ -72,7 +80,10 @@ def main() -> int:
         if source.lstrip().startswith("!"):
             print(f"[harness] cell {index}: skipping shell/pip cell")
             continue
-        if index == 33 and not args.ui:
+        if args.serve and index in (27, 29):
+            print(f"[harness] cell {index}: skipping startup evaluation")
+            continue
+        if index == 33 and not (args.ui or args.serve):
             print("[harness] cell 33: skipping Gradio launch (pass --ui to run it)")
             continue
 
@@ -99,8 +110,8 @@ def main() -> int:
             print(f"  {pattern}", file=sys.stderr)
 
     print("\n[harness] all cells completed")
-    if args.ui:
-        print("[harness] Gradio running at http://127.0.0.1:7899 — Ctrl-C to stop")
+    if args.ui or args.serve:
+        print(f"[harness] Gradio running at http://{SERVER_HOST}:{SERVER_PORT} — Ctrl-C to stop")
         try:
             namespace["demo"].block_thread()
         except KeyboardInterrupt:
