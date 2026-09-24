@@ -85,6 +85,43 @@ cd RevConnectAI_v5_API_Prototype && python api_connection_smoke_test.py
 
 As of 2026-07-28 that reports 722 organizations and 22 upcoming events.
 
+### Developer APIs
+
+CampusGroups has more than the public RSS feeds used here:
+
+| Interface | Purpose | Access |
+|---|---|---|
+| [RSS groups and events](https://www.campusgroups.com/api?public=1) | Published group and event data | Public fields can be read without a credential; this is what the free web edition uses. |
+| [Data API](https://www.campusgroups.com/api?public=1) | SOAP/XML queries and real-time create/update operations | Requires institution-level API credentials and appropriate authorization. The API key is listed under Admin > Settings > General Settings > Integration & API. |
+| [Data Export API](https://docs-prod-us-east-1.service.campusgroups.com/service-data/index.html) | Read-only REST/JSON bulk exports | Requires a school API secret; availability for GW and any Data Intelligence entitlement must be confirmed with its platform administrators. |
+
+The current deployment needs no privileged API access. Never put a school API
+secret in `public/`, client-side JavaScript, or Git. If GW authorizes a future
+integration, keep the credential on the server side and request only the data
+needed for that feature. These APIs exchange CampusGroups data; they do not
+provide application hosting or control of RevConnect URL routes.
+
+### RevConnect Pages integration
+
+GW's [RevConnect](https://students.gwu.edu/student-organizations) is powered by
+CampusGroups and runs at `revconnect.gwu.edu`. A group website gets a path such
+as `revconnect.gwu.edu/<group-acronym>/`. Inspection of the Pages interface on
+2026-09-24 showed page and menu creation, a rich-text Widget editor with an HTML
+Source mode, and Website Settings for custom CSS and JavaScript. Its "Primary
+website" setting can redirect the **entire group website** to the URL saved
+under Dashboard > Settings > Address: Website.
+
+For this project, the lowest-effort integration is a link from a group page or
+menu to `https://cjsrxzdyzds.com/`, while Cloudflare continues to host the app.
+An in-page embed may be possible through a Widget or page HTML, but iframe/HTML
+filtering, browser framing rules, and the app's behavior inside RevConnect have
+not been tested. A redirect should only be configured for a group website whose
+owners want to replace that whole site's landing address. Hosting the app at a
+platform-level path such as `revconnect.gwu.edu/revconnect-ai/` requires GW and
+CampusGroups administrators to confirm routing support and authorize it; the
+group Pages interface does not expose that deployment control. No RevConnect
+page or setting was changed during this inspection.
+
 ## Layout
 
 | Path | What it is |
@@ -107,7 +144,9 @@ python sync_notebook.py --check   # fail if they have drifted
 
 ## Data scope
 
-Public organization and event data only. No user, membership, officer,
-attendee, transaction, or payment data is requested, and no write endpoints are
-used. Events are surfaced at `privacyLevel` 0 (public) and 1 (authenticated
-campus community); see `CHANGELOG_v5.txt` for how to restrict that.
+The deployed web edition uses only public organization and event data
+(`privacyLevel` 0 for events). No user, membership, officer, attendee,
+transaction, or payment data is requested, and no write endpoints are used.
+The original Python prototype's API client also permits `privacyLevel` 1
+(authenticated campus community) in its configuration; see `CHANGELOG_v5.txt`
+for how to restrict that client.
