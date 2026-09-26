@@ -1,0 +1,1311 @@
+{
+  "research_date": "2026-09-26",
+  "language": "English",
+  "status": "Read-only research; application development paused",
+  "privacy": "Schema and de-identified observations only; no submitted values, private URLs, file tokens, message text, or payment credentials",
+  "counting_note": "Counts represent source-specific catalog entries. A question can contain multiple concepts and a concept can occur in multiple sources. Do not sum counts as independent facts per request.",
+  "coverage": {
+    "current_form_pages": 12,
+    "current_form_questions": 71,
+    "root_request_routes": 9,
+    "list_sample_rows": 100,
+    "selected_cards_expanded_in_follow_up": 7,
+    "rows_with_visible_form_attachments": 47,
+    "distinct_visible_form_attachment_tokens": 60,
+    "visible_form_attachment_link_occurrences": 91,
+    "existing_conversations_read": 2,
+    "chat_images_visually_read": 2,
+    "workflow_routes_inspected": 5,
+    "full_submission_audit": false,
+    "financial_api_verified": false,
+    "attachment_bulk_download": false,
+    "pdf_body_read": false,
+    "root_routes_observed_in_list_sample": 6,
+    "special_workflow_inspection_interrupted": true
+  },
+  "form_questions": [
+    {
+      "question_id": 25,
+      "page": "1. Purchase Requests",
+      "label": "Request type",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 7,
+      "page": "2. Credit Card",
+      "label": "Purchase type",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 26,
+      "page": "2. Credit Card",
+      "label": "Intended vendor/channel",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1144,
+      "page": "2. Credit Card",
+      "label": "Wishlist link",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 27,
+      "page": "2. Credit Card",
+      "label": "Event flyer/attendee list",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 28,
+      "page": "2. Credit Card",
+      "label": "Vendor name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 33,
+      "page": "2. Credit Card",
+      "label": "Invoice attachment",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 34,
+      "page": "2. Credit Card",
+      "label": "Restaurant/store",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 35,
+      "page": "2. Credit Card",
+      "label": "Event date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 36,
+      "page": "3. Delivery",
+      "label": "Recipient name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1454,
+      "page": "3. Delivery",
+      "label": "Recipient phone",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 37,
+      "page": "3. Delivery",
+      "label": "Campus/off-campus/pickup",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1608,
+      "page": "3. Delivery",
+      "label": "Academic office/dorm",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1204,
+      "page": "3. Delivery",
+      "label": "Dorm",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 38,
+      "page": "3. Delivery",
+      "label": "Academic office building",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 39,
+      "page": "3. Delivery",
+      "label": "Room/office number",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 40,
+      "page": "3. Delivery",
+      "label": "Address",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 41,
+      "page": "4. Reimbursement",
+      "label": "Reimbursement recipient",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 45,
+      "page": "4. Reimbursement",
+      "label": "Category",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 536,
+      "page": "4. Reimbursement",
+      "label": "Purchase vendor",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 51,
+      "page": "4. Reimbursement",
+      "label": "Purchase date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 47,
+      "page": "4. Reimbursement",
+      "label": "Receipt attachment",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 46,
+      "page": "4. Reimbursement",
+      "label": "Event flyer/attendee list",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 108,
+      "page": "5. ACH/Direct Deposit",
+      "label": "Invoice attachment",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 692,
+      "page": "5. ACH/Direct Deposit",
+      "label": "Vendor name/contact",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 63,
+      "page": "6. Org/Dept Transfer",
+      "label": "Recipient type",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 62,
+      "page": "6. Org/Dept Transfer",
+      "label": "Transfer reason",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 2070,
+      "page": "6. Org/Dept Transfer",
+      "label": "Organization",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 676,
+      "page": "6. Org/Dept Transfer",
+      "label": "Department name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 65,
+      "page": "6. Org/Dept Transfer",
+      "label": "Oracle/Banner number",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 66,
+      "page": "6. Org/Dept Transfer",
+      "label": "Event confirmation number",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 675,
+      "page": "6. Org/Dept Transfer",
+      "label": "Event confirmation/fleet rental summary",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 67,
+      "page": "7. Travel",
+      "label": "Destination",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 68,
+      "page": "7. Travel",
+      "label": "Method",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 69,
+      "page": "7. Travel",
+      "label": "Company",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 70,
+      "page": "7. Travel",
+      "label": "Station/airport",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 71,
+      "page": "7. Travel",
+      "label": "Ticket/voucher count",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 72,
+      "page": "7. Travel",
+      "label": "Departure date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 73,
+      "page": "7. Travel",
+      "label": "Return date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 74,
+      "page": "7. Travel",
+      "label": "Nonrefundable/group ticket acceptance",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 535,
+      "page": "8. Uber Vouchers",
+      "label": "Destination",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 112,
+      "page": "8. Uber Vouchers",
+      "label": "Voucher count",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 113,
+      "page": "8. Uber Vouchers",
+      "label": "Recipient emails",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 225,
+      "page": "8. Uber Vouchers",
+      "label": "Amount per voucher",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 75,
+      "page": "9. Hotel",
+      "label": "Destination",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 76,
+      "page": "9. Hotel",
+      "label": "Hotel name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 77,
+      "page": "9. Hotel",
+      "label": "Check-in date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 78,
+      "page": "9. Hotel",
+      "label": "Check-out date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 79,
+      "page": "9. Hotel",
+      "label": "Reservation already made",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 85,
+      "page": "9. Hotel",
+      "label": "Booking channel",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 80,
+      "page": "9. Hotel",
+      "label": "Confirmation number",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 81,
+      "page": "9. Hotel",
+      "label": "Daily/total room rate and tax rate",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 83,
+      "page": "9. Hotel",
+      "label": "Block/nonrefundable acceptance",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 87,
+      "page": "9. Hotel",
+      "label": "Reservation name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 224,
+      "page": "9. Hotel",
+      "label": "Credit-card authorization format",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 222,
+      "page": "9. Hotel",
+      "label": "Authorization attachment",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 223,
+      "page": "9. Hotel",
+      "label": "Authorization link",
+      "builder_mandatory_marker": false,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 96,
+      "page": "10. Enterprise",
+      "label": "Destination",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 97,
+      "page": "10. Enterprise",
+      "label": "Pickup/return location",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1185,
+      "page": "10. Enterprise",
+      "label": "Pickup date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 1186,
+      "page": "10. Enterprise",
+      "label": "Return date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 99,
+      "page": "10. Enterprise",
+      "label": "Vehicles/count/models",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 98,
+      "page": "10. Enterprise",
+      "label": "Authorized drivers",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 677,
+      "page": "11. Contracts",
+      "label": "Vendor name",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 638,
+      "page": "11. Contracts",
+      "label": "Event request completed",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 678,
+      "page": "11. Contracts",
+      "label": "Event/service start date",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 679,
+      "page": "11. Contracts",
+      "label": "Contract request completed",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 635,
+      "page": "11. Contracts",
+      "label": "Total contract cost",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 637,
+      "page": "11. Contracts",
+      "label": "Vendor payment method",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 690,
+      "page": "12. Campus Rec Travel",
+      "label": "Travel type",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    },
+    {
+      "question_id": 691,
+      "page": "12. Campus Rec Travel",
+      "label": "Travel receipt/confirmation",
+      "builder_mandatory_marker": true,
+      "conditional_display_verified": false,
+      "evidence": "current_form_definition"
+    }
+  ],
+  "other_source_fields": {
+    "request_and_funding": [
+      {
+        "field": "submission_id",
+        "description": "Submission record identifier",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "submitter_name",
+        "description": "Submitter display name",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "submitter_email",
+        "description": "Submitter email",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "submitter_role",
+        "description": "Displayed submitter role",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "started_at",
+        "description": "Displayed start timestamp",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "submitted_at",
+        "description": "Displayed submission timestamp",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "updated_at",
+        "description": "Displayed update timestamp",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "approved_at",
+        "description": "Approval timestamp when provided",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "tags",
+        "description": "Submission tags",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "approval_status",
+        "description": "Source approval status",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "workflow_step_number",
+        "description": "Current stage number/count",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "workflow_step_title",
+        "description": "Current stage label",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "transaction_id",
+        "description": "Linked financial transaction identifier",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "transaction_title",
+        "description": "Linked financial transaction title",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "group_name",
+        "description": "Organization name",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "group_type",
+        "description": "Organization classification",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_name",
+        "description": "Named budget/fiscal period",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "payment_type",
+        "description": "Source financial payment type",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "description",
+        "description": "Financial transaction description",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "amount_from_allocated",
+        "description": "Raw allocated-funding amount; sign and semantics require verification",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "amount_from_group_money",
+        "description": "Raw group-money amount; not assumed additive",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "receipt_references",
+        "description": "Receipt references in financial details",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "payee_vendor",
+        "description": "Payee/vendor in applicable financial views",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "additional_notes",
+        "description": "Financial notes; can include a purchasing URL",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_item_name",
+        "description": "Budget line description",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_item_code",
+        "description": "Accounting code displayed with budget line",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "total_funds_needed",
+        "description": "Budget-line total funds needed",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "financed_by_group",
+        "description": "Budget-line group financing",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_requested",
+        "description": "Budget-line requested funding",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_approved",
+        "description": "Budget-line approved funding",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_notes",
+        "description": "Budget-line notes",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "transaction_created_at",
+        "description": "Financial transaction creation date",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "total_payment_requested",
+        "description": "Requested payment in allocation table",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "from_approved",
+        "description": "Amount attributed to approved allocation",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "from_group_funds",
+        "description": "Amount attributed to group funds",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "remaining_balance",
+        "description": "Displayed balance; verify row scope and freshness",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "budget_status",
+        "description": "Budget status label",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "payment_status",
+        "description": "Financial UI status label; does not establish bank settlement",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      }
+    ],
+    "workflow_and_conversation": [
+      {
+        "field": "workflow_reference",
+        "description": "Workflow source reference; value is not published",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "stage_label",
+        "description": "Label of each workflow stage",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "stage_description",
+        "description": "Stage-specific instructions",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "stage_source_state",
+        "description": "Observed complete/active/disabled UI state",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "stage_approval_policy",
+        "description": "Source ANYONE (FROM ANY TEAM) APPROVES policy",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "approver_team",
+        "description": "Approver team/role",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "approver_identity",
+        "description": "Individual approver identity in the authorized UI",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "approver_status",
+        "description": "Approved or waiting state per approver",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "available_actions",
+        "description": "Displayed approval/modification/rejection/reset/notification controls; never activated",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "action_notification_audience",
+        "description": "Audience described for modification/rejection messages",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "conversation_channel_type",
+        "description": "Author, all participants, private workflow, or team-scoped channel",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "conversation_participant_references",
+        "description": "Conversation participant references; do not treat URL membership as an authorization grant",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "message_author",
+        "description": "Displayed message sender",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "message_display_time",
+        "description": "Displayed message time; complete date/time history unverified",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "message_content",
+        "description": "Existing conversation content; raw values not retained in this catalog",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "chat_attachment_references",
+        "description": "Attachments added in an existing conversation, separate from form attachments",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "message_source_id",
+        "description": "DOM message identifier observed in existing internal conversation; export stability unverified",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "message_calendar_date",
+        "description": "Calendar date displayed alongside message time in existing internal conversation",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      }
+    ],
+    "attachment_metadata": [
+      {
+        "field": "source_file_token",
+        "description": "Observed eid token; cross-session stability unverified",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "displayed_filename",
+        "description": "Source filename, sometimes truncated",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "filename_type_hint",
+        "description": "doc/image prefix or extension; does not prove content type",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "parent_submission_reference",
+        "description": "Submission-to-file association",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "source_question_reference",
+        "description": "Question-to-file association when visibly supplied",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "repeated_link_relationship",
+        "description": "Same file can occur in an answer and attachment summary",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "access_outcome",
+        "description": "Readable preview, download-only attempt, or preview failure",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "image_dimensions",
+        "description": "Natural image dimensions available for a previewed image",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      }
+    ],
+    "document_visual_evidence": [
+      {
+        "field": "order_date",
+        "description": "Order placement date visible in first screenshot",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "order_number",
+        "description": "Order identifier visible in first screenshot",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "order_total",
+        "description": "Per-order total visible in screenshot",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "ship_to_name",
+        "description": "Displayed delivery recipient",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "placed_by_name",
+        "description": "Displayed purchaser",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "purchasing_account_label",
+        "description": "Displayed purchasing account label",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "estimated_arrival",
+        "description": "Relative arrival timing; screenshot date/context is needed",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "product_description",
+        "description": "Item name/model",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "item_price",
+        "description": "Displayed item price",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "product_sku",
+        "description": "Product identifier visible in second screenshot",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "quantity",
+        "description": "Displayed quantity",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "list_price",
+        "description": "Original displayed price",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "sale_price",
+        "description": "Discounted displayed price",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "savings",
+        "description": "Displayed discount/savings",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "shipping_address",
+        "description": "Shipping address",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "shipping_phone",
+        "description": "Shipping contact phone",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "shipping_email",
+        "description": "Shipping contact email",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "shipping_method",
+        "description": "Shipping service",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "shipping_fee",
+        "description": "Shipping fee or free-shipping label",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "signature_required",
+        "description": "Delivery signature requirement",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "card_brand",
+        "description": "Displayed card brand",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "masked_card_reference",
+        "description": "Masked card reference; retain only if required and authorized",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "card_expiry",
+        "description": "Visible in evidence; omit from routine normalized case data",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "billing_name",
+        "description": "Displayed billing/cardholder name",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "billing_address",
+        "description": "Billing address",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "order_subtotal",
+        "description": "Order subtotal before displayed deductions/additions",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "tax",
+        "description": "Displayed tax amount",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      },
+      {
+        "field": "currency_symbol",
+        "description": "Dollar symbol is visible; currency code was not established",
+        "evidence_status": "observed_in_authorized_ui_or_sample",
+        "universal_availability_verified": false
+      }
+    ]
+  },
+  "workflow_definitions_observed": {
+    "Credit Card": [
+      "Initial Review",
+      "Action Required - Make Appointment",
+      "Action Required - Awaiting Receipt from Submitter",
+      "APPROVED"
+    ],
+    "Contract": [
+      "Contract/Check Processing",
+      "APPROVED"
+    ],
+    "ACH/Direct Deposit": [
+      "Contract/Check Processing",
+      "APPROVED"
+    ],
+    "Reimbursement": [
+      "Initial Review",
+      "Conur Submitted",
+      "Reimb Manager Approval",
+      "APPROVED"
+    ],
+    "Hotel": [
+      "Initial Review",
+      "Action Required - Make Appointment",
+      "Action Required - Awaiting Receipt from Submitter",
+      "APPROVED"
+    ]
+  },
+  "findings": [
+    {
+      "code": "chat_evidence_is_separate",
+      "finding": "Supporting purchase evidence can be added in conversation attachments rather than form upload answers."
+    },
+    {
+      "code": "multiple_orders_per_request",
+      "finding": "One reviewed case had screenshots showing multiple orders and multiple items; do not model request-to-order as one-to-one."
+    },
+    {
+      "code": "request_evidence_amount_difference",
+      "finding": "Visible order totals did not match the allocated amount on the inspected financial record. Cause and final payable amount remain unresolved; never overwrite either source amount."
+    },
+    {
+      "code": "order_evidence_is_not_settlement",
+      "finding": "Product/payment information in an order screenshot does not alone establish completed settlement or a compliant final receipt."
+    },
+    {
+      "code": "partial_document_context",
+      "finding": "The second image showed item, delivery, and payment information but no visible purchase date or order number. Those values must not be copied from a different order without verified linkage."
+    },
+    {
+      "code": "prefilled_chat_links",
+      "finding": "Some chat controls contain prefilled messages and setup parameters. Only an existing conversation without a prefilled message was opened; other channels were not initialized."
+    },
+    {
+      "code": "completed_purchase_waiting_receipt",
+      "finding": "The credit-card workflow explicitly describes its receipt stage as a completed transaction awaiting an itemized receipt; retain source evidence rather than infer bank settlement."
+    },
+    {
+      "code": "mixed_sources_estimate_actual",
+      "finding": "A hotel request had an earlier split-funding estimate in notes, different current funding values, and a staff note whose total reconciled with the current allocation and group-funds amounts in this sample. Do not generalize additive semantics to every financial view."
+    },
+    {
+      "code": "archive_reference_not_archive_proof",
+      "finding": "An existing private message used a merchant/organization/transaction/amount/fund-style reference. A reference alone does not verify that a receipt exists in Box."
+    },
+    {
+      "code": "shared_route_workflow",
+      "finding": "The inspected completed hotel case used the same stage labels as the inspected credit-card case. Request route and workflow template are separate dimensions."
+    },
+    {
+      "code": "existing_private_conversation",
+      "finding": "A two-message internal conversation exposed a system context message, staff note, sender, message IDs, calendar date, time, and participant context. Other empty or prefilled channels were not initialized."
+    },
+    {
+      "code": "delayed_receipt_update_gap",
+      "finding": "Whether new conversation evidence changes the parent request update timestamp is unverified; polling request timestamps alone may miss evidence."
+    }
+  ],
+  "next_verification": [
+    "Authorized export/API coverage",
+    "Reliable form-attachment preview without unwanted Downloads files",
+    "Document type and itemized receipt acceptance rules",
+    "Order-to-transaction reconciliation and tax/fee/discount treatment",
+    "Box filing references and archive verification",
+    "Authoritative balance semantics and pending commitments",
+    "Workflow event timestamps and conversation access boundaries"
+  ],
+  "catalog_counts": {
+    "form_question_entries": 71,
+    "request_and_funding": 38,
+    "workflow_and_conversation": 18,
+    "attachment_metadata": 8,
+    "document_visual_evidence": 28
+  },
+  "sample_aggregates": {
+    "selection": "First 100 rows loaded under Updated On descending; not random or representative of all submissions",
+    "route_counts": {
+      "Credit Card": 78,
+      "Reimbursement": 16,
+      "Hotel": 3,
+      "Contract": 1,
+      "ACH/Direct Deposit": 1,
+      "Campus Rec Travel": 1
+    },
+    "credit_card_category_counts": {
+      "Misc. Supplies/Equipment": 33,
+      "Food": 26,
+      "Registration": 7,
+      "Clothing": 4,
+      "Membership": 3,
+      "Books": 2,
+      "Services": 2,
+      "Already paid by staff p-card": 1
+    },
+    "visible_stage_counts": {
+      "Initial Review": 48,
+      "Action Required - Awaiting Receipt from Submitter": 5,
+      "Action Required - Make Appointment": 3,
+      "Contract/Check Processing": 2,
+      "Conur Submitted": 1
+    },
+    "stage_count_note": "Only displayed recognized stage labels are counted; this is not a full status distribution."
+  },
+  "documented_api_candidates": {
+    "evidence_status": "Public vendor documentation; not tested for GW",
+    "source": "https://docs-prod-us-east-1.service.campusgroups.com/service-data/index.html",
+    "models": {
+      "budgets": "Budget identity, lifecycle, allocation, form references, and administrators",
+      "budget_transactions": "Financial identity, funding components, category, status, method, vendor, references, and receipt references",
+      "surveys": "Form identity and workflow-template reference",
+      "survey_submissions": "Submission identity, lifecycle, approval metadata, related content, and question/answer responses"
+    },
+    "candidate_joins": [
+      {
+        "relationship": "Submission to form",
+        "verified_for_gw": false
+      },
+      {
+        "relationship": "Financial transaction to budget",
+        "verified_for_gw": false
+      },
+      {
+        "relationship": "Submission related-content reference to financial transaction",
+        "verified_for_gw": false
+      },
+      {
+        "relationship": "Exported question identifier to current builder identifier",
+        "verified_for_gw": false
+      }
+    ],
+    "requirements": "Institutional authentication and enabled access must be confirmed; exports are requested and then retrieved with pagination. Attachment bodies, chat history, workflow-event history, and budget-line balances remain coverage questions. No authenticated API call or write API call was made."
+  },
+  "research_stop_reason": "Browser workflow navigation, state reading, and tab closing timed out while attempting Campus Rec / already-paid / Concur-stage follow-up. No successful observation of those special workflow pages is claimed."
+}
