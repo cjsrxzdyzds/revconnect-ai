@@ -1,0 +1,108 @@
+{
+  "policy_id": "gwu-payment-request-initial-review",
+  "version": "2026-09-26-draft-1",
+  "status": "reviewable_draft_with_confirmed_core_rules",
+  "scope": "Offline decision support; no payments, messages, workflow changes, or document uploads",
+  "money": {
+    "representation": "integer minor units",
+    "currency": "USD",
+    "decimal_places": 2,
+    "comparison_tolerance_minor": 0,
+    "normalization": "Verify source semantics. Do not apply absolute value to signed ledger amounts automatically."
+  },
+  "confirmed_rules": {
+    "purchase_initial_gate": "Sufficient verified available funding is the only business condition at this gate.",
+    "purchase_evidence_blocks_initial_gate": false,
+    "reimbursement_multiple_receipts_allowed": true,
+    "reimbursement_match_basis": "sum_of_verified_receipt_totals_minus_verified_ineligible_amounts",
+    "reimbursement_lower_bound_minor_exclusive": 2500,
+    "reimbursement_upper_bound_minor_exclusive": 50000,
+    "reimbursement_amount_mismatch_outcome": "STAFF_REVIEW",
+    "reimbursement_include_remaining_tax_shipping_tip": true,
+    "initial_funding_preference": "submitted_allocation",
+    "automatic_initial_reallocation": false,
+    "post_purchase_overrun_preferred_source": "budget",
+    "post_purchase_overrun_revenue_fallback_allowed": true,
+    "initial_balance_basis": "system_current_balance_without_pending_request_deduction",
+    "pending_requests_reduce_available_balance": false,
+    "all_tax_shipping_tip_retained_after_item_exclusions": true,
+    "reimbursement_manual_categories": ["gasoline", "transportation", "hotel"],
+    "reimbursement_prohibited_examples": ["flowers", "ammunition"],
+    "prohibited_examples_are_exhaustive": false,
+    "required_payment_evidence": ["paid_confirmation", "credit_card_last_four"],
+    "reimbursement_submission_window_days": 60,
+    "reimbursement_submitter_must_differ_from_recipient": true,
+    "food_flyer_or_attendee_list_required": true
+  },
+  "pending_rules": {
+    "initial_allocation_shortfall_exception_process": null,
+    "additional_ineligible_categories": null,
+    "reimbursement_range_exception_process": null
+  },
+  "routing": {
+    "credit_card_unpaid": "purchase",
+    "reimbursement": "reimbursement",
+    "already_paid_staff_card": "reconciliation",
+    "campus_rec_already_paid": "reconciliation",
+    "internal_transfer": "transfer",
+    "contract_ach_hotel_transport_rental": "Verify purpose and payment state before selecting the purchase branch. Their specialized later-stage checks remain separate.",
+    "unknown_or_conflicting": "STAFF_REVIEW"
+  },
+  "decision_order": {
+    "purchase": [
+      "validate_identity_route_currency_and_money_semantics",
+      "resolve_eligible_funding_scope_and_verified_available_balance",
+      "use_submitted_allocations_without_automatic_initial_reallocation",
+      "compare_available_funding_greater_than_or_equal_to_requested_amount",
+      "emit_PURCHASE_INITIAL_GATE_PASS_or_FUNDING_HOLD_or_STAFF_REVIEW_for_allocation_shortfalls"
+    ],
+    "reimbursement": [
+      "validate_identity_route_currency_and_money_semantics",
+      "route_gasoline_transportation_and_hotel_to_staff",
+      "require_readable_itemized_receipts_and_purchase_dates",
+      "require_paid_confirmation_and_credit_card_last_four_for_every_receipt",
+      "require_submission_within_60_calendar_days_of_each_purchase",
+      "require_different_verified_submitter_and_recipient_ids",
+      "require_event_flyer_or_attendee_list_if_any_food_is_present",
+      "require_verified_unique_receipts_and_verified_ineligible_amounts",
+      "compute_eligible_total_in_minor_units",
+      "compare_requested_amount_exactly_to_eligible_total",
+      "require_2500_less_than_eligible_total_less_than_50000",
+      "resolve_funding_with_the_same_funding_rules",
+      "require_verified_eligibility_and_exclusions_without_inventing_an_exhaustive_category_list",
+      "emit_REIMBURSEMENT_READY_FOR_STAFF_REVIEW_only_when_confirmed_checks_pass"
+    ],
+    "purchase_overrun": [
+      "verify_original_amount_and_completed_actual_purchase_payment",
+      "compute_actual_paid_minus_original_amount",
+      "if_positive_prefer_eligible_budget_for_extra_amount_only",
+      "if_budget_covers_extra_emit_OVERRUN_FUNDING_PROPOSAL",
+      "otherwise_use_revenue_for_the_remainder_if_verified_balance_covers_it",
+      "if_combined_funding_cannot_cover_the_already_paid_extra_require_staff_reconciliation",
+      "never_apply_this_rule_to_reimbursement_amount_mismatches_or_make_a_second_payment"
+    ]
+  },
+  "outputs": [
+    "PURCHASE_INITIAL_GATE_PASS",
+    "REIMBURSEMENT_READY_FOR_STAFF_REVIEW",
+    "FUNDING_HOLD",
+    "NEEDS_EVIDENCE",
+    "NEEDS_POLICY_INPUT",
+    "STAFF_REVIEW",
+    "RECONCILIATION_REVIEW",
+    "TRANSFER_REVIEW",
+    "OVERRUN_FUNDING_PROPOSAL"
+  ],
+  "execution_permissions": {
+    "advance_source_workflow": false,
+    "send_messages": false,
+    "purchase_or_pay": false,
+    "submit_reimbursement": false,
+    "upload_to_box": false
+  },
+  "provenance": {
+    "confirmed_rule_source": "Office user's explicit clarifications in this conversation on 2026-09-26",
+    "observed_form_instructions": "Research inputs; unresolved instructions are not activated as production rules.",
+    "sensitive_source_values_included": false
+  }
+}

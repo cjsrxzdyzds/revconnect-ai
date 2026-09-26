@@ -237,6 +237,8 @@ Also verify document format, page count, whether text is directly selectable or 
 
 ### Office workflow supplied by the user
 
+**Later clarification (2026-09-26):** The purchase initial gate checks sufficient funds only; food evidence does not block that first gate. Initial funding follows the submitted split and uses system current balances without deducting pending unpaid requests. Budget preference applies to the extra amount only after an actual purchase overrun, with Revenue covering any remainder. Reimbursements allow multiple receipts, match the eligible combined total exactly, and require an amount strictly between $25 and $500. All tax, shipping, and tips remain included after ineligible item exclusions. The user confirmed paid evidence plus card last four, the 60-day window, different submitter/recipient, and food flyer or attendee list. Gasoline, transportation, and hotel reimbursements go to staff; flowers and ammunition are ineligible. The [agent decision tree](payment-request-agent-decision-tree.md) and [policy configuration](payment-request-agent-policy.json) record these later rules and remaining exception conditions. The earlier bullets below describe the original discussion, rather than all first-stage gates.
+
 The user described office procedures that add context beyond the form definition. These are user-reported practices, not independently verified policy:
 
 - Intake separates purchases from reimbursements. Purchases are routed by Amazon, ordering platforms such as EZCater/Instacart, established vendor accounts, or student-supplied purchasing websites.
