@@ -3,11 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build:reimbursement": "node scripts/build_reimbursement_assets.mjs",
+    "predeploy": "npm run build:reimbursement",
     "refresh-data": "python3 scripts/build_web_data.py --refresh-live",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "@tesseract.js-data/eng": "^1.0.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.4.296",
+    "tesseract.js": "^7.0.0"
   }
 }

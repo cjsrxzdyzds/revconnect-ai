@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Reimbursement Preparation | Org Help Finance</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./vendor/pdf-lib.min.js" defer></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to case</a>
+  <header class="topbar">
+    <div class="wrap top-inner">
+      <div><a class="home-link" href="/">RevConnect<span>AI</span></a><span class="eyebrow">ORG HELP FINANCE</span><h1>Reimbursement preparation</h1></div>
+      <span class="local-pill">Files stay in this browser session</span>
+    </div>
+    <nav class="wrap subnav" aria-label="Main navigation"><a href="/#ask">Ask</a><a href="/#discover">Discover</a><a href="/#guidance">Guidance</a><a href="/#plan">Plan an event</a><a href="/reimbursement/" aria-current="page">Reimbursement</a></nav>
+  </header>
+  <main class="wrap" id="main">
+    <p class="intro">Import the CampusGroups printout, original invoices or receipts, and any event material. The page suggests facts and builds a Concur worksheet; a staff member must verify every source and complete Concur actions.</p>
+    <div id="fatal" class="alert hidden" role="alert"></div>
+
+    <section class="card" aria-labelledby="files-title">
+      <div class="section-head"><span class="step">01</span><div><h2 id="files-title">Source documents</h2><p>Selectable text is read directly; scanned request and receipt pages use local English OCR. Verify every suggestion against the original.</p></div></div>
+      <div class="file-grid">
+        <label class="file-picker"><strong>CampusGroups printout</strong><span>One PDF exported from the exact request</span><input id="request-file" type="file" accept="application/pdf,.pdf" /></label>
+        <label class="file-picker"><strong>Original invoices / receipts</strong><span>One expense will be proposed per file</span><input id="receipt-files" type="file" accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg" multiple /></label>
+        <label class="file-picker"><strong>Event or other support</strong><span>Flyer, attendee list, and supplemental pages</span><input id="support-files" type="file" accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg" multiple /></label>
+      </div>
+      <div id="file-status" class="file-status" aria-live="polite">No documents selected.</div>
+      <div id="ocr-status" class="ocr-status" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="request-title">
+      <div class="section-head"><span class="step">02</span><div><h2 id="request-title">Request and funding</h2><p>Suggestions are never marked verified automatically. Compare each value with the printout and the current balance.</p></div></div>
+      <div class="form-grid" id="case-form">
+        <label>Request number<input id="request-id" autocomplete="off" inputmode="numeric" placeholder="e.g. 5369" /></label>
+        <label>Organization abbreviation<input id="org-abbrev" autocomplete="off" placeholder="e.g. ASA" /></label>
+        <label class="wide">Organization name<input id="organization" autocomplete="off" /></label>
+        <label>Reimbursement recipient<input id="recipient" autocomplete="off" /></label>
+        <label>Request submitter<input id="submitter" autocomplete="off" /></label>
+        <label>RevConnect submission date<input id="submitted-date" type="date" /></label>
+        <label>Requested amount (USD)<input id="requested-amount" inputmode="decimal" placeholder="0.00" /></label>
+        <label>Budget portion (USD)<input id="budget-amount" inputmode="decimal" placeholder="0.00" /></label>
+        <label>Current Budget balance (USD)<input id="budget-balance" inputmode="decimal" placeholder="0.00" /></label>
+        <label>Revenue portion (USD)<input id="revenue-amount" inputmode="decimal" placeholder="0.00" /></label>
+        <label>Current Revenue balance (USD)<input id="revenue-balance" inputmode="decimal" placeholder="0.00" /></label>
+        <label>Concur submission month<input id="concur-month" type="month" /></label>
+        <label>Concur Report Date<input id="report-date" type="date" /></label>
+        <label>GWID for PDF heading<input id="gwid" autocomplete="off" placeholder="Leave blank only if explicitly approved" /></label>
+        <label>Food event evidence<select id="support-type"><option value="none">None / not applicable</option><option value="flyer">Event flyer</option><option value="attendee_list">Attendee list</option></select></label>
+      </div>
+      <div class="checks">
+        <label><input id="request-verified" type="checkbox" /> I verified the request facts against the exact printout.</label>
+        <label><input id="parties-verified" type="checkbox" /> I confirmed submitter and recipient are different people.</label>
+        <label><input id="budget-verified" type="checkbox" /> I checked the current balance of the specified Budget line.</label>
+        <label><input id="revenue-verified" type="checkbox" /> I checked the current Revenue balance.</label>
+        <label><input id="concur-month-verified" type="checkbox" /> I confirmed the Concur submission month.</label>
+        <label><input id="report-date-verified" type="checkbox" /> I confirmed the Concur Report Date.</label>
+        <label><input id="support-verified" type="checkbox" /> I checked the event evidence belongs to this request.</label>
+        <label><input id="blank-gwid-confirmed" type="checkbox" /> Blank GWID is explicitly approved for this case.</label>
+      </div>
+      <details id="request-evidence" class="evidence hidden"><summary>Printout extraction hints</summary><div></div></details>
+    </section>
+
+    <section class="card" aria-labelledby="receipts-title">
+      <div class="section-head"><span class="step">03</span><div><h2 id="receipts-title">One expense per invoice</h2><p>Check itemized totals, paid evidence, card last-four presence, categories, exclusions, and each expense's Allocate split.</p></div></div>
+      <div id="receipt-cards" class="receipt-stack"><div class="empty">Add original invoices or receipts above.</div></div>
+    </section>
+
+    <section class="card" aria-labelledby="review-title">
+      <div class="section-head"><span class="step">04</span><div><h2 id="review-title">Decision and Concur worksheet</h2><p>A clear result means ready for staff review, never final reimbursement approval.</p></div></div>
+      <div id="decision" class="decision neutral" aria-live="polite">Add case facts to begin review.</div>
+      <ul id="issues" class="issues"></ul>
+      <div id="concur-plan" class="concur-plan"></div>
+    </section>
+
+    <section class="card" aria-labelledby="pdf-title">
+      <div class="section-head"><span class="step">05</span><div><h2 id="pdf-title">Combined evidence PDF</h2><p>Heading, CampusGroups printout, every original invoice, then support. Inspect every page before using it in Concur.</p></div></div>
+      <div class="actions"><button id="generate-pdf" type="button" class="primary">Generate PDF preview</button><a id="download-pdf" class="secondary hidden" download>Download reviewed PDF</a></div>
+      <p id="pdf-message" class="help" aria-live="polite">No PDF has been generated.</p>
+      <label id="pdf-reviewed-wrap" class="review-check hidden"><input id="pdf-reviewed" type="checkbox" /> I inspected the generated pages and confirmed the correct request, recipient, invoices, and supporting files.</label>
+      <div id="manifest" class="manifest"></div>
+      <iframe id="pdf-preview" class="pdf-preview hidden" title="Generated PDF preview"></iframe>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap">Local preparation only. Nothing here creates, approves, submits, or pays a Concur expense report. Case files are not sent to this site.</div></footer>
+</body>
+</html>

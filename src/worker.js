@@ -1,5 +1,8 @@
+import { handleAsk } from './free-ai.js';
+export { FreeAiBudget } from './free-ai.js';
+
 const EVENTS_URL =
-  "https://gwu.campusgroups.com/rss_events?deleted=0&time_range=upcoming_only&future_day_range=60&limit=60&privacy_displayed_to=0&privacy_level=0";
+  "https://gwu.campusgroups.com/rss_events?deleted=0&time_range=upcoming_only&future_day_range=60&limit=300&privacy_displayed_to=0&privacy_level=0";
 
 function xmlValue(item, tag) {
   const match = item.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`, "i"));
@@ -44,21 +47,28 @@ export function parsePublicEvents(xml) {
     if (blocked.has(field(item, "approvalStatus").toLowerCase())) continue;
     const privacy = field(item, "privacyLevel");
     const displayed = field(item, "privacyDisplayedTo");
-    if (privacy && privacy !== "0" && privacy !== "Everyone") continue;
-    if (displayed && displayed !== "0" && displayed !== "Everyone") continue;
+    if (privacy !== "0" && privacy !== "Everyone") continue;
+    if (displayed !== "0" && displayed !== "Everyone") continue;
     const title = field(item, "title");
     const id = field(item, "eventUid") || field(item, "eventId");
     if (!title || !id || seen.has(id)) continue;
     seen.add(id);
     events.push({
       id,
+      groupId: field(item, "groupId"),
       title,
       host: field(item, "group"),
       category: field(item, "eventType"),
       date: field(item, "eventDate"),
       time: field(item, "eventTime"),
+      endDate: field(item, "eventEndDate"),
+      endTime: field(item, "eventEndTime"),
+      timeZone: field(item, "timeZone"),
+      locationType: field(item, "locationType"),
+      foodProvided: field(item, "foodProvided") === "1" ? true : field(item, "foodProvided") === "0" ? false : null,
+      calendarUrl: safeLink(field(item, "iCalLink")),
       location: field(item, "eventLocation"),
-      description: field(item, "description").slice(0, 500),
+      description: (field(item, "fullDescription") || field(item, "description")).slice(0, 6000),
       url: safeLink(field(item, "eventLink")),
     });
   }
@@ -79,6 +89,16 @@ function jsonResponse(body, status = 200, maxAge = 0) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/ask') {
+      return handleAsk(request, env, async () => {
+        const snapshot = await env.ASSETS.fetch(new Request(`${url.origin}/data.json`));
+        if (!snapshot.ok) throw new Error('Missing public snapshot');
+        const data = await snapshot.json();
+        const live = await this.fetch(new Request(`${url.origin}/api/events`), env, ctx);
+        const events = live.ok ? (await live.json()).events : data.events;
+        return { data, events };
+      });
+    }
     if (url.pathname !== "/api/events") {
       return jsonResponse({ error: "Not found" }, 404);
     }
@@ -87,7 +107,7 @@ export default {
     }
 
     const cache = caches.default;
-    const cacheKey = new Request(`${url.origin}/api/events`, { method: "GET" });
+    const cacheKey = new Request(`${url.origin}/api/events?schema=2`, { method: "GET" });
     const cached = await cache.match(cacheKey);
     if (cached) return cached;
 
@@ -100,7 +120,7 @@ export default {
       const xml = await upstream.text();
       if (!xml.includes("<rss")) throw new Error("CampusGroups returned unexpected data");
       const response = jsonResponse(
-        { events: parsePublicEvents(xml), fetchedAt: new Date().toISOString() },
+        { events: parsePublicEvents(xml), fetchedAt: new Date().toISOString(), feedLimit: 300, feedDays: 60 },
         200,
         600,
       );

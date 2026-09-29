@@ -3,6 +3,15 @@
   "name": "revconnect-ai",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-24",
+  "ai": { "binding": "AI" },
+  "vars": {
+    "AI_ENABLED": "true",
+    "CF_ACCOUNT_ID": "35848341e36c419118dcfef3faf29aef"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "AI_BUDGET", "class_name": "FreeAiBudget" }]
+  },
+  "migrations": [{ "tag": "free-ai-v1", "new_sqlite_classes": ["FreeAiBudget"] }],
   "routes": [
     { "pattern": "cjsrxzdyzds.com", "custom_domain": true }
   ],

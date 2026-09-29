@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "RevConnectAI_Knowledge_Base_v4"
 OUTPUT = ROOT / "public" / "data.json"
 GROUPS_URL = "https://gwu.campusgroups.com/rss_groups?include_unpublished=0&include_deleted=0"
-EVENTS_URL = "https://gwu.campusgroups.com/rss_events?deleted=0&time_range=upcoming_only&future_day_range=60&limit=60&privacy_displayed_to=0&privacy_level=0"
+EVENTS_URL = "https://gwu.campusgroups.com/rss_events?deleted=0&time_range=upcoming_only&future_day_range=60&limit=300&privacy_displayed_to=0&privacy_level=0"
 TABLES = {
     "resources": "campus_resources.csv",
     "howto": "campusgroups_howto.csv",
@@ -76,6 +76,7 @@ def fetch_groups(starter: list[dict[str, str]]) -> list[dict[str, str]]:
         match = curated.get(name.casefold(), {})
         description = clean(" ".join(row.get(key, "") for key in ("mission", "whatWeDo", "goals")))
         groups.append({
+            "id": row.get("groupId", ""),
             "name": name,
             "category": row.get("category") or match.get("category", ""),
             "description": description or match.get("description", ""),
@@ -93,9 +94,9 @@ def fetch_events() -> list[dict[str, str]]:
         row = {node.tag.split("}")[-1]: clean(" ".join(node.itertext())) for node in item}
         if row.get("eventDelete") == "1" or row.get("approvalStatus", "").lower() in blocked:
             continue
-        if row.get("privacyLevel", "0") not in {"0", "Everyone"}:
+        if row.get("privacyLevel") not in {"0", "Everyone"}:
             continue
-        if row.get("privacyDisplayedTo", "0") not in {"0", "Everyone"}:
+        if row.get("privacyDisplayedTo") not in {"0", "Everyone"}:
             continue
         event_id = row.get("eventUid") or row.get("eventId", "")
         title = row.get("title", "")
@@ -104,13 +105,20 @@ def fetch_events() -> list[dict[str, str]]:
         seen.add(event_id)
         events.append({
             "id": event_id,
+            "groupId": row.get("groupId", ""),
             "title": title,
             "host": row.get("group", ""),
             "category": row.get("eventType", ""),
             "date": row.get("eventDate", ""),
             "time": row.get("eventTime", ""),
+            "endDate": row.get("eventEndDate", ""),
+            "endTime": row.get("eventEndTime", ""),
+            "timeZone": row.get("timeZone", ""),
+            "locationType": row.get("locationType", ""),
+            "foodProvided": True if row.get("foodProvided") == "1" else False if row.get("foodProvided") == "0" else None,
+            "calendarUrl": safe_url(row.get("iCalLink", "")),
             "location": row.get("eventLocation", ""),
-            "description": row.get("description", "")[:500],
+            "description": (row.get("fullDescription") or row.get("description", ""))[:6000],
             "url": safe_url(row.get("eventLink", "")),
         })
     return events
@@ -132,6 +140,11 @@ def main() -> None:
         data["groupsFetchedAt"] = datetime.now(timezone.utc).isoformat()
         data["events"] = fetch_events()
         data["eventsFetchedAt"] = datetime.now(timezone.utc).isoformat()
+        data["eventFeedLimit"] = 300
+        data["eventFeedDays"] = 60
+    else:
+        data["eventFeedLimit"] = previous.get("eventFeedLimit", 60)
+        data["eventFeedDays"] = previous.get("eventFeedDays", 60)
     if not data["groups"]:
         data["groups"] = [
             {

@@ -7,8 +7,8 @@
     <meta name="description" content="RevConnectAI helps GW students explore organizations, public events, funding guidance, and event planning resources." />
     <title>RevConnectAI · Student engagement at GW</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/styles.css" />
-    <script type="module" src="/app.js"></script>
+    <link rel="stylesheet" href="/styles.css?v=2026-09-29-2" />
+    <script type="module" src="/app.js?v=2026-09-29-2"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -23,6 +23,7 @@
           <a href="#discover">Discover</a>
           <a href="#guidance">Guidance</a>
           <a href="#plan">Plan an event</a>
+          <a href="/reimbursement/">Reimbursement</a>
         </nav>
         <a class="header-link" href="https://revconnect.gwu.edu/" target="_blank" rel="noopener noreferrer">Official RevConnect <span aria-hidden="true">↗</span></a>
       </div>
@@ -47,6 +48,7 @@
             <a href="#discover-events"><span class="step-icon">02</span><span><strong>See what is happening</strong><small>Upcoming public campus events</small></span><span aria-hidden="true">↗</span></a>
             <a href="#guidance"><span class="step-icon">03</span><span><strong>Understand the process</strong><small>Funding and policy starting points</small></span><span aria-hidden="true">↗</span></a>
             <a href="#plan"><span class="step-icon">04</span><span><strong>Make a plan</strong><small>Budget and application draft tools</small></span><span aria-hidden="true">↗</span></a>
+            <a href="/reimbursement/"><span class="step-icon">05</span><span><strong>Prepare reimbursement</strong><small>Review receipts and assemble Concur evidence</small></span><span aria-hidden="true">↗</span></a>
           </aside>
         </div>
         <div class="hero-rule"></div>
@@ -62,32 +64,41 @@
 
       <section class="section section-ask" id="ask">
         <div class="shell">
-          <div class="section-heading"><div><div class="kicker">01 / ASK</div><h2>Start with a question.</h2><p>Search the published guidance and the public directory. Results link to the source so you can verify the latest rule.</p></div></div>
+          <div class="section-heading"><div><div class="kicker">01 / ASK</div><h2>Find a next step that fits.</h2><p>Tell us your interests or when you are free. Explore events and groups with reasons for each match, or find published planning guidance.</p></div></div>
           <form id="ask-form" class="ask-form">
             <label class="sr-only" for="ask-input">Your question</label>
-            <input id="ask-input" type="search" placeholder="e.g. How early should we request co-sponsorship?" maxlength="300" required />
-            <button type="submit" class="button button-blue">Find guidance <span aria-hidden="true">→</span></button>
+            <input id="ask-input" type="search" placeholder="e.g. Cultural events on Sunday from 4-8pm" maxlength="300" required />
+            <button type="submit" class="button button-blue">Find matches <span aria-hidden="true">→</span></button>
           </form>
-          <div class="prompt-row"><span>Try asking</span><button type="button" data-question="How do I create an event?">Creating an event</button><button type="button" data-question="When is co-sponsorship due?">Co-sponsorship timing</button><button type="button" data-question="Where can I get help with reimbursements?">Reimbursement help</button></div>
+          <div class="prompt-row"><span>Try asking</span><button type="button" data-question="Cultural events on Sunday from 4-8pm">Sunday cultural events</button><button type="button" data-question="Recommend groups for AI and consulting">AI & consulting groups</button><button type="button" data-question="When is co-sponsorship due?">Co-sponsorship timing</button></div>
           <div id="ask-results" class="result-panel" aria-live="polite"><div class="empty-state">Your source-backed results will appear here.</div></div>
         </div>
       </section>
 
       <section class="section section-discover" id="discover">
         <div class="shell">
-          <div class="section-heading"><div><div class="kicker">02 / DISCOVER</div><h2>Find your place on campus.</h2><p>Search public RevConnect listings. Open a result to see its current details and membership options.</p></div></div>
+          <div class="section-heading"><div><div class="kicker">02 / DISCOVER</div><h2>Find your place on campus.</h2><p>Compare groups by interest and find events that fit your whole time window. Follow the source to check current registration and membership options.</p></div></div>
           <div class="discover-grid">
             <div class="panel" id="discover-groups">
               <div class="panel-heading"><div><span class="panel-overline">STUDENT ORGANIZATIONS</span><h3>Find a group</h3></div><span id="group-count" class="count-pill">—</span></div>
               <label class="sr-only" for="group-search">Search groups</label>
-              <input id="group-search" class="search-field" type="search" placeholder="Search by name, interest, or category" maxlength="120" />
+              <input id="group-search" class="search-field" type="search" placeholder="e.g. AI and consulting" maxlength="200" />
               <div id="group-results" class="listing" aria-live="polite"></div>
               <p class="panel-note" id="group-note"></p>
             </div>
             <div class="panel" id="discover-events">
               <div class="panel-heading"><div><span class="panel-overline">PUBLIC EVENTS</span><h3>What's coming up</h3></div><span id="event-count" class="count-pill">—</span></div>
               <label class="sr-only" for="event-search">Search events</label>
-              <input id="event-search" class="search-field" type="search" placeholder="Search by event, host, or interest" maxlength="120" />
+              <input id="event-search" class="search-field" type="search" placeholder="e.g. Sunday 4-8pm cultural events" maxlength="200" aria-describedby="event-search-help" />
+              <p class="panel-note" id="event-search-help">Try a weekday, YYYY-MM-DD, time window, interest or “food provided”. The controls below override dates and times in your question. All time controls use GW time.</p>
+              <div class="event-filters">
+                <label>On date<input id="event-date" type="date" /></label>
+                <label>Available from<input id="event-start" type="time" /></label>
+                <label>Until<input id="event-end" type="time" /></label>
+                <label class="food-filter"><input id="event-food" type="checkbox" /> Host marks food provided</label>
+                <button id="event-reset" type="button" class="reset-button">Clear conditions</button>
+              </div>
+              <div id="event-query-summary" class="query-summary" aria-live="polite"></div>
               <div id="event-results" class="listing" aria-live="polite"></div>
               <p class="panel-note" id="event-note"></p>
             </div>
@@ -116,6 +127,24 @@
               <form id="budget-form" class="form-grid">
                 <label>Expected attendance<input name="attendees" type="number" min="0" max="100000" value="50" required /></label>
                 <label>Food<select name="food"><option value="snacks">Snacks / refreshments</option><option value="meal">Meal</option><option value="none">No food</option></select></label>
+                <fieldset id="food-workspace" class="catering-workspace wide">
+                  <legend>Food order workspace</legend>
+                  <div class="catering-intro"><img src="/assets/partners/ezcater.png" width="46" height="46" alt="ezCater" /><div><strong>Start with ezCater</strong><span>Plan the order here, then enter the itemized quote from your purchasing account. Prices are never fetched automatically.</span></div></div>
+                  <div class="catering-fields">
+                    <label>Purchasing channel<select name="foodProvider"><option value="ezcater">ezCater · recommended</option><option value="instacart">Instacart · grocery-style orders</option><option value="other">Other approved channel</option></select></label>
+                    <label>Restaurant or store<input name="foodVendor" type="text" maxlength="100" placeholder="From the actual quote" /></label>
+                    <label>Delivery date<input name="foodDate" type="date" /></label>
+                    <label>Delivery time<input name="foodTime" type="time" /></label>
+                    <label>Delivery ZIP<input name="foodZip" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="20052" /></label>
+                    <label>Dietary needs<input name="dietaryNeeds" type="text" maxlength="180" placeholder="Vegetarian, allergies, etc." /></label>
+                    <label>Menu subtotal ($)<input name="foodQuote" type="number" min="0" step="0.01" placeholder="Actual itemized quote" /></label>
+                    <label>Delivery fee ($)<input name="deliveryFees" type="number" min="0" step="0.01" value="0" /></label>
+                    <label>Service fee ($)<input name="serviceFees" type="number" min="0" step="0.01" value="0" /></label>
+                    <label>Tip ($)<input name="foodTip" type="number" min="0" step="0.01" value="0" /></label>
+                    <label>Quoted sales tax ($)<input name="foodTax" type="number" min="0" step="0.01" value="0" /></label>
+                  </div>
+                  <p class="catering-disclaimer">Confirm tax exemption, minimum order, dietary options, delivery window, and the final total with Org Help before purchasing. This workspace does not connect to a vendor account or place orders.</p>
+                </fieldset>
                 <label>Supplies per person ($)<input name="supplies" type="number" min="0" step="0.01" value="5" /></label>
                 <label>Marketing ($)<input name="marketing" type="number" min="0" step="0.01" value="100" /></label>
                 <label>Venue ($)<input name="venue" type="number" min="0" step="0.01" value="0" /></label>
@@ -145,6 +174,16 @@
               </form>
               <div id="draft-result" class="tool-result" aria-live="polite">Your editable narrative will appear here. Nothing is sent or stored.</div>
             </div>
+          </div>
+          <div class="partners-panel" aria-labelledby="partners-title">
+            <div class="partners-head"><div><span class="panel-overline">PURCHASING PARTNERS</span><h3 id="partners-title">Choose a purchasing channel</h3></div><p>Start with the channel that fits the order. Check availability, final prices, tax exemption, and Org Help procedures before purchasing.</p></div>
+            <div class="partner-grid">
+              <article><div class="partner-logo partner-logo-ezcater"><img src="/assets/partners/ezcater.png" width="56" height="56" alt="ezCater logo" /></div><strong>ezCater</strong><p>First place to check for catered meals and larger food orders.</p></article>
+              <article><div class="partner-logo partner-logo-instacart"><img src="/assets/partners/instacart.svg" width="150" height="32" alt="Instacart logo" /></div><strong>Instacart</strong><p>Groceries, snacks, and smaller food or beverage orders.</p></article>
+              <article><div class="partner-logo partner-logo-amazon"><img src="/assets/partners/amazon.png" width="130" height="44" alt="Amazon logo" /></div><strong>Amazon</strong><p>Event supplies and eligible goods; share a Wish List for extensive orders.</p></article>
+              <article><div class="partner-logo partner-logo-uber"><img src="/assets/partners/uber-for-business.svg" width="142" height="46" alt="Uber for Business logo" /></div><strong>Uber for Business</strong><p>Transportation-related requests require staff review before a channel is chosen.</p></article>
+            </div>
+            <p class="partner-note">Partner names are planning guidance, not live quotes or automated ordering. No order is placed here.</p>
           </div>
         </div>
       </section>
