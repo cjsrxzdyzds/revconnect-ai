@@ -85,6 +85,40 @@ class DecisionAcceptanceTests(unittest.TestCase):
         request["pending_unpaid_request_amount_minor"] = 10000
         self.assertEqual(self.decide(request)["decision"], "PURCHASE_INITIAL_GATE_PASS")
 
+    def after_request_purchase(self, residual=0):
+        request = purchase(balance=residual)
+        request["funding_pools"][0].update({
+            "balance_basis": "after_this_request",
+            "included_request_id": request["request_id"],
+            "included_allocation_minor": 10000,
+            "request_inclusion_verified": True,
+            "latest_scope_balance_verified": True,
+        })
+        return request
+
+    def test_after_request_zero_and_positive_balances_pass_without_double_deduction(self):
+        for residual in (0, 1500):
+            self.assertEqual(self.decide(self.after_request_purchase(residual))["decision"], "PURCHASE_INITIAL_GATE_PASS")
+
+    def test_after_request_negative_balance_holds(self):
+        self.assertEqual(self.decide(self.after_request_purchase(-1))["decision"], "FUNDING_HOLD")
+
+    def test_after_request_requires_exact_verified_inclusion_and_latest_line(self):
+        for field, value in (("included_request_id", "another-request"), ("included_allocation_minor", 9999), ("request_inclusion_verified", False), ("latest_scope_balance_verified", False)):
+            request = self.after_request_purchase()
+            request["funding_pools"][0][field] = value
+            self.assertEqual(self.decide(request)["decision"], "NEEDS_EVIDENCE")
+
+    def test_unknown_balance_basis_never_passes(self):
+        request = purchase()
+        request["funding_pools"][0]["balance_basis"] = "unknown"
+        self.assertEqual(self.decide(request)["decision"], "NEEDS_EVIDENCE")
+
+    def test_after_request_rule_does_not_assume_reimbursement_semantics(self):
+        request = reimbursement()
+        request["funding_pools"][0].update(self.after_request_purchase()["funding_pools"][0])
+        self.assertEqual(self.decide(request)["decision"], "STAFF_REVIEW")
+
     def test_original_split_preserved(self):
         request = purchase()
         request["funding_pools"] = [pool(balance=10000), pool("revenue-1", "revenue", 4000)]
@@ -232,6 +266,11 @@ class DecisionAcceptanceTests(unittest.TestCase):
         result = self.decide(request)
         self.assertEqual(result["decision"], "OVERRUN_FUNDING_PROPOSAL")
         self.assertEqual(result["proposed_funding"], [{"account_scope_id": "revenue-1", "source": "revenue", "amount_minor": 1000}])
+
+    def test_overrun_cannot_restore_the_original_request_deduction(self):
+        request = self.after_request_purchase()
+        request.update({"purpose": "purchase_overrun", "approved_amount_minor": 10000, "approved_amount_verified": True, "actual_paid_amount_minor": 11000, "actual_payment_verified": True, "actual_payment_evidence_ref": "synthetic-paid", "overrun_budget_scope_id": "budget-1"})
+        self.assertEqual(self.decide(request)["decision"], "STAFF_REVIEW")
 
 
 if __name__ == "__main__":

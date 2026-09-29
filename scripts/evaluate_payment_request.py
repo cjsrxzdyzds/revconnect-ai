@@ -47,6 +47,9 @@ def evaluate_overrun(request, policy):
     if budget.get("eligible_for_request") is not True or budget.get("currency") != request.get("currency"):
         result["reasons"].append("Verify the overrun Budget account's eligibility and currency.")
         return result
+    if budget.get("balance_basis", "before_request") != "before_request":
+        result["reasons"].append("Overrun accounting requires balances available for the extra; initial-request ledger restoration cannot be reused here.")
+        return result
     budget_available = max(0, balance)
     selected = candidates
     allocations = [{"account_scope_id": scope, "amount_minor": extra}]
@@ -218,6 +221,7 @@ def evaluate(request, policy):
         selected.append((by_scope[identity], allocated))
     if sum(allocated for _, allocated in selected) != amount:
         return finish("STAFF_REVIEW", "Submitted funding components do not sum exactly to the request.")
+    capacities = {}
     for pool, allocated in selected:
         if pool.get("source") not in ("budget", "revenue") or pool.get("currency") != request["currency"]:
             return finish("STAFF_REVIEW", "Funding source or currency is unresolved.")
@@ -226,17 +230,28 @@ def evaluate(request, policy):
         if type(pool.get("available_balance_minor")) is not int or pool.get("balance_verified") is not True or not pool.get("snapshot_ref") or not pool.get("observed_at"):
             return finish("NEEDS_EVIDENCE", "Funding needs a verified balance snapshot and observation time.")
         result["evidence_refs"].append(pool["snapshot_ref"])
+        basis = pool.get("balance_basis", "before_request")
+        capacity = pool["available_balance_minor"]
+        if basis == "after_this_request":
+            if purpose != "purchase" or pool["source"] != "budget":
+                return finish("STAFF_REVIEW", "After-request balance handling is confirmed only for purchase Budget lines.")
+            if not request.get("request_id") or pool.get("included_request_id") != request["request_id"] or pool.get("request_inclusion_verified") is not True or type(pool.get("included_allocation_minor")) is not int or pool["included_allocation_minor"] != allocated or pool.get("latest_scope_balance_verified") is not True:
+                return finish("NEEDS_EVIDENCE", "Establish that the latest line balance includes this exact request and submitted component once.")
+            capacity += allocated
+        elif basis != "before_request":
+            return finish("NEEDS_EVIDENCE", "Funding balance basis is unresolved.")
+        capacities[pool["account_scope_id"]] = capacity
 
     if sum(pool["source"] == "budget" for pool, _ in selected) > 1 or sum(pool["source"] == "revenue" for pool, _ in selected) > 1:
         return finish("STAFF_REVIEW", "Combining multiple budget lines or revenue accounts is not defined.")
     shortfalls = [
-        {"account_scope_id": pool["account_scope_id"], "shortfall_minor": allocated - pool["available_balance_minor"]}
-        for pool, allocated in selected if pool["available_balance_minor"] < allocated
+        {"account_scope_id": pool["account_scope_id"], "shortfall_minor": allocated - capacities[pool["account_scope_id"]]}
+        for pool, allocated in selected if capacities[pool["account_scope_id"]] < allocated
     ]
     if shortfalls:
         result["checks"]["funding_sufficient"] = False
         result["allocation_shortfalls"] = shortfalls
-        if sum(max(0, pool["available_balance_minor"]) for pool, _ in selected) < amount:
+        if sum(max(0, capacities[pool["account_scope_id"]]) for pool, _ in selected) < amount:
             return finish("FUNDING_HOLD", "Verified eligible submitted funding cannot cover the amount.")
         result["pending_conditions"].append("initial_allocation_shortfall_exception_process")
         return finish("STAFF_REVIEW", "Combined balances may suffice, but the submitted split has a shortfall. Do not automatically reallocate before payment.")

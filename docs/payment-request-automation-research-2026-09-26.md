@@ -2,7 +2,7 @@
 
 Research date: September 26, 2026 (America/New_York).
 
-Status: research only. RevConnectAI application development and Cloudflare integration are paused at the user's request. This document preserves the findings and a proposed design; it does not implement an integration or authorize financial actions.
+Status: point-in-time research and a proposed payment-request design. The separate RevConnectAI application has since resumed development. This document does not authorize financial actions.
 
 ## Conclusion
 
@@ -27,7 +27,7 @@ The primary source is the authenticated [GW Payment Request Form submissions pag
 | Reporting | Generate Report and Stats controls are present. Report output, format, columns, attachment joins, and pagination are not verified. |
 | API | No authenticated financial API endpoint or institutional integration credentials were tested. Browser visibility does not establish API availability. |
 
-Research used read-only observations. No requests were approved, rejected, edited, reset, submitted, or paid. No messages were sent. This document contains no submitted personal record values, raw receipt contents, private attachment links, banking details, or session-bearing URLs.
+The initial research used read-only observations. No requests were approved, rejected, edited, reset, submitted, or paid during that phase, and no messages were sent. A later, separately authorized initial-review pilot is recorded below. This document contains no submitted personal record values, raw receipt contents, private attachment links, banking details, or session-bearing URLs.
 
 The session exposes administrative functions. Do not infer that ordinary students can see the same data, or that a student-facing RevConnectAI application may use this access.
 
@@ -330,3 +330,19 @@ The separate [CampusGroups API documentation](https://www.campusgroups.com/api?p
 | Institutional API scope and connector permissions/costs | Select an integration path without assuming school access or free use |
 
 Browser navigation, state reading, and tab closing repeatedly timed out while attempting special-case workflows after the 100-row sample. Campus Rec, the already-paid category, and the later Concur-stage case were observed in the list but their additional workflow details are not claimed as inspected. Resume from the saved catalog and verify these cases when browser control is available.
+
+## Authorized initial-review pilot update
+
+Two Credit Card requests passed the office-confirmed initial funding gate. Their Initial Review steps were advanced to Action Required - Make Appointment, and the supplied English appointment notice was sent once in each With the submitter conversation. Approval completion and the persisted message were checked in the source UI. No later workflow stage was advanced. A superseded duplicate was left untouched at the user's direction. The source identities, financial values, signed links, message identifiers, and screenshots are deliberately excluded from this document.
+
+### Additional observable financial information
+
+The Accounting Book identifies the active organization and exposes Budgets, Allocations/Revenues, Expenses, and Balance. Its bottom Group Funds section provides the actual revenue/group-income balance; a separately named Group Funds / Revenue budget row can contain zero values and must not substitute for that account. The transaction list links a request ID to its funding source, debit/credit, date, status, vendor, category, payment method, and workflow. Pending expenses are displayed separately. The office rule uses the displayed current balance without an additional agent deduction for unpaid requests.
+
+Budget detail can already include the current request in deductions. Verify the specific budget line and exact request component, then check the latest after-request line residual is nonnegative. Do not subtract the same request again or use an unrelated organization total. This balance basis is now represented in the offline policy and evaluator.
+
+### Execution and audience findings
+
+The three principal workflow chat choices are With the submitter, Everyone involved in the workflow AND the submitter, and Chat (Private), which excludes the submitter. Additional team-scoped chat entries exist. Applicant notifications must bind to the exact author channel and verified participants. Opening a new discussion can create a CampusGroups Bot context message automatically; that message is separate from the staff approval notice.
+
+The workflow fragment opened as a standalone page lacked its required scripts. Operational actions succeeded through the original application's workflow modal. Read-only fragment access does not establish a functioning action integration. No supported API for workflow advancement was verified in this pilot.

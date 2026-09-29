@@ -1,6 +1,6 @@
 {
   "policy_id": "gwu-payment-request-initial-review",
-  "version": "2026-09-26-draft-1",
+  "version": "2026-09-26-draft-2",
   "status": "reviewable_draft_with_confirmed_core_rules",
   "scope": "Offline decision support; no payments, messages, workflow changes, or document uploads",
   "money": {
@@ -26,13 +26,24 @@
     "initial_balance_basis": "system_current_balance_without_pending_request_deduction",
     "pending_requests_reduce_available_balance": false,
     "all_tax_shipping_tip_retained_after_item_exclusions": true,
-    "reimbursement_manual_categories": ["gasoline", "transportation", "hotel"],
-    "reimbursement_prohibited_examples": ["flowers", "ammunition"],
+    "reimbursement_manual_categories": [
+      "gasoline",
+      "transportation",
+      "hotel"
+    ],
+    "reimbursement_prohibited_examples": [
+      "flowers",
+      "ammunition"
+    ],
     "prohibited_examples_are_exhaustive": false,
-    "required_payment_evidence": ["paid_confirmation", "credit_card_last_four"],
+    "required_payment_evidence": [
+      "paid_confirmation",
+      "credit_card_last_four"
+    ],
     "reimbursement_submission_window_days": 60,
     "reimbursement_submitter_must_differ_from_recipient": true,
-    "food_flyer_or_attendee_list_required": true
+    "food_flyer_or_attendee_list_required": true,
+    "purchase_budget_request_already_in_ledger": "Verify exact request inclusion in the latest budget-line balance; pass when the after-request residual is nonnegative, without a second deduction."
   },
   "pending_rules": {
     "initial_allocation_shortfall_exception_process": null,
@@ -53,7 +64,7 @@
       "validate_identity_route_currency_and_money_semantics",
       "resolve_eligible_funding_scope_and_verified_available_balance",
       "use_submitted_allocations_without_automatic_initial_reallocation",
-      "compare_available_funding_greater_than_or_equal_to_requested_amount",
+      "compare_before_request_capacity_to_submitted_component_or_verified_after_request_budget_residual_to_zero",
       "emit_PURCHASE_INITIAL_GATE_PASS_or_FUNDING_HOLD_or_STAFF_REVIEW_for_allocation_shortfalls"
     ],
     "reimbursement": [

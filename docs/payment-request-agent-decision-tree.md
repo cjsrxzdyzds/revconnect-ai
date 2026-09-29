@@ -74,7 +74,7 @@ For reimbursements, every receipt retains its own purchase date, payment evidenc
 1. Identify the eligible account or specific budget line for this request. Do not sum an organization's unrelated budget lines or duplicate UI balance fields.
 2. Establish a verified system current balance, its source reference, currency, and observation time. Do not subtract pending/unpaid applications. Unknown balance is not zero and is not a funding pass. A verified negative balance cannot support a positive allocation; do not convert it to positive with an absolute value.
 3. Verify the submitted allocation components sum to the requested amount. Check only the accounts with a nonzero submitted allocation; an unrelated account does not become a blocking condition.
-4. Compare each submitted component with the corresponding verified available balance. Equality is sufficient: a $100 available balance can cover a $100 allocated component.
+4. Establish whether the displayed balance is before or after this request. For a before-request balance, compare each submitted component with its corresponding balance; equality passes. For a purchase Budget line that already deducts this exact request, verify its inclusion and use the latest line residual: `Remaining Balance >= 0` passes. Do not subtract this request twice or substitute an earlier running transaction balance. Preserve deductions already present in the system; the no-reservation rule prohibits additional agent deductions.
 5. If a component is short but the combined balances of the submitted eligible sources could cover the request, emit `STAFF_REVIEW`. The user indicated allocation can be flexible, but clarified that initial preference is the submitted split. The agent must not invent an initial reallocation exception.
 6. If the combined verified balances of those sources cannot cover the request, emit `FUNDING_HOLD`. Unknown evidence produces its own outcome rather than being treated as insufficient money.
 
@@ -144,15 +144,16 @@ Additional later-stage conditions to define after initial review: purchase sched
 
 ## Workflow conversation routing
 
-The observed conversation entry points can be grouped into three audience classes. Two existing conversations were read: one applicant-facing conversation and one administrator-internal conversation. Team-scoped entries were identified, but their message bodies were not verified. Two images in an existing conversation were visually inspected. This coverage does not establish access to every request's conversations or any chat-export API.
+The workflow exposes three principal conversation entry points, with additional team-scoped conversations. Two existing conversations were read: one applicant-facing conversation and one administrator-internal conversation. Team-scoped entries were identified, but their message bodies were not verified. Two images in an existing conversation were visually inspected. This coverage does not establish access to every request's conversations or any chat-export API.
 
 | Audience class | Source channel pattern | Proposed agent use |
 | --- | --- | --- |
-| Applicant or participant conversation | `workflow_with_author`; `workflow_with_all_participants` | Draft missing-document requests, appointment instructions, and status notices, using the verified actual participant list. These two channel variants may have different audiences. |
+| With the submitter | `workflow_with_author` | Applicant and the relevant administrator; verify the participant list before sending the approved appointment template. |
+| Everyone involved AND the submitter | `workflow_with_all_participants` | Broader workflow participants plus applicant; distinct from the applicant channel. |
 | Administrator internal conversation | `workflow` | Draft processing records, actual purchase date, expected receipt date, and verified storage references. Do not expose these notes in the applicant channel. |
 | Specific team conversation | `workflow_with_my_group_{team}`; `workflow_with_group_{team}` | Draft coordination for that team after verifying team scope and recipients. Do not assume every administrator can see it. |
 
-Before any later messaging integration, bind a draft to the request ID, exact source channel, verified audience, purpose, supporting evidence, and office-approved English template. A similar-looking text box is insufficient evidence of its audience. A staff note saying a receipt is in Box is not proof of a stored file; keep storage claims separate from verified Box references. No conversation messages were sent during this design work, and the offline evaluator does not generate or send message drafts.
+Before any later messaging integration, bind a draft to the request ID, exact source channel, verified audience, purpose, supporting evidence, and office-approved English template. A similar-looking text box is insufficient evidence of its audience. A staff note saying a receipt is in Box is not proof of a stored file; keep storage claims separate from verified Box references. The offline evaluator does not generate or send message drafts. A separately authorized live pilot advanced only Initial Review on two purchase requests and sent the supplied English template in each applicant channel. Live identities, amounts, screenshots, and conversation URLs are excluded from this public document.
 
 ## Agent output contract
 
@@ -248,6 +249,12 @@ All examples are synthetic. They assume other required facts are verified unless
 
 ## Research provenance and publication
 
-Validation: 24 synthetic acceptance tests passed, covering exact funding equality, allocation preservation, negative balances, unpaid-request treatment, multiple receipts, exclusions, retained incidental charges, amount boundaries, one-cent mismatches, per-receipt payment evidence, the 60-day boundary, identities, food evidence, manual categories, duplicate receipts, currency handling, and Budget/Revenue overrun proposals. These are rule tests rather than live CampusGroups or document-extraction tests.
+Validation: 30 synthetic acceptance tests passed, covering exact funding equality, allocation preservation, negative balances, unpaid-request treatment, multiple receipts, exclusions, retained incidental charges, amount boundaries, one-cent mismatches, per-receipt payment evidence, the 60-day boundary, identities, food evidence, manual categories, duplicate receipts, currency handling, and Budget/Revenue overrun proposals. These are rule tests rather than live CampusGroups or document-extraction tests.
 
-Related work: [information catalog](payment-request-information-catalog-2026-09-26.json) and [research report](payment-request-automation-research-2026-09-26.md). No private submitted values, signed URLs, card details, or downloaded attachments are embedded in this design or evaluator. Public publication remains subject to the previously unresolved approval for the authenticated-system research; this version can be reviewed locally.
+Related work: [information catalog](payment-request-information-catalog-2026-09-26.json) and [research report](payment-request-automation-research-2026-09-26.md). No private submitted values, signed URLs, card details, or downloaded attachments are embedded in this design or evaluator. This public version records generalized rules and observations only.
+
+## Balance evidence contract update
+
+`balance_basis` defaults to `before_request` for the original input contract. Explicit `after_this_request` is supported only for purchase Budget lines. It requires `included_request_id` equal to the evaluated request ID, `included_allocation_minor` equal to the submitted component, `request_inclusion_verified: true`, and `latest_scope_balance_verified: true`, in addition to the existing verified scope and balance evidence. The evaluator restores that component once for comparison, which is equivalent to requiring a nonnegative residual. Unknown basis or unverified inclusion cannot pass. Revenue, reimbursement, and post-payment overrun ledger semantics require separate verification; the purchase-specific rule is not assumed for them.
+
+The reusable English appointment notice is saved in [the template](templates/credit-card-initial-review-approval.html). Sending it requires a verified first-stage pass, the correct request and applicant audience, and explicit messaging authority. Confirm that Initial Review is complete before sending; do not advance the appointment or receipt stages.

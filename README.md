@@ -41,7 +41,7 @@ not run the notebook's local language or embedding models. The original
 Python/Gradio prototype remains available through `run_local.py`.
 
 The organization directory and fallback event list are sanitized snapshots in
-`public/data.json`. The Worker fetches up to 60 nearest public events from the
+`public/data.json`. The Worker fetches up to 300 nearest public events from the
 CampusGroups RSS feed and returns only the fields the page displays. The page
 shows when data was checked and links users to RevConnect and official guidance.
 No CampusGroups credential is required. The five source policy PDFs are absent
@@ -84,6 +84,35 @@ cd RevConnectAI_v5_API_Prototype && python api_connection_smoke_test.py
 ```
 
 As of 2026-07-28 that reports 722 organizations and 22 upcoming events.
+
+### Guided discovery prototype
+
+The Ask and Discover sections accept English questions such as
+`Cultural events on Sunday from 4-8pm` and
+`Recommend groups for AI and consulting`. A local parser recognizes supported interests,
+weekdays, ISO dates, time windows, food provision, explicit free entry, and online
+formats. Results show the interpreted conditions and evidence from published
+records. Date and time controls override the question's date and time settings.
+Discovery matching is deterministic. The Ask endpoint can add a bounded
+Cloudflare Workers AI summary of matching public records when the account's
+free-tier status is verified; it falls back to the deterministic results when
+that check or inference fails. It is not a general-purpose LLM chat.
+
+Time windows require the whole published event to fit and a verified GW time
+zone. Unknown end times do not pass that filter. Food provision does not establish
+free food, and missing prices remain unknown. A limited source check flags explicit
+start times in event prose that differ from the structured listing. This does not
+detect every possible conflict or verify registration eligibility. Group suggestions
+use published interests and link related upcoming events from the available feed.
+
+The Worker and refreshed snapshot retain end dates/times, timezone offsets,
+food flags, calendar links, and up to 6,000 characters of public event description.
+The feed requests up to 300 events over 60 days; it is not the complete campus
+calendar. Snapshot records with missing public visibility markers are excluded.
+
+Run `npm test` for discovery and public-feed tests, then `npm run dev` to preview.
+Policy and funding guidance still use the existing curated records and need
+current official sources before expanding into policy-specific recommendations.
 
 ### Developer APIs
 
