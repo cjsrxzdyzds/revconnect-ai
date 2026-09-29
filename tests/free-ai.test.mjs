@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { AI_MODEL, DAILY_CALL_LIMIT, MAX_OUTPUT_TOKENS, MAX_PROMPT_BYTES, subscriptionsAreFree, verifyFreeAccount, buildPrompt, handleAsk, FreeAiBudget } from '../src/free-ai.js';
+import { retrieveSources } from '../public/retrieval.js';
 
 const data = JSON.parse(await readFile(new URL('../public/data.json', import.meta.url)));
 const question = 'Recommend groups for AI and consulting';
@@ -93,6 +94,11 @@ test('one bounded inference uses server records and server-generated source link
   assert.equal(calls[0][1].max_tokens, MAX_OUTPUT_TOKENS);
   assert.ok(new TextEncoder().encode(JSON.stringify(calls[0][1].messages)).length <= MAX_PROMPT_BYTES);
   assert.ok(result.sources.every(source => data.groups.some(group => group.name === source.title && group.url === source.url)));
+});
+test('planning questions prioritize official process guidance over unrelated public groups', () => {
+  const sources = retrieveSources(data, [], 'What should I prepare before requesting event funding?');
+  assert.equal(sources[0].url, 'https://students.gwu.edu/organization-finances');
+  assert.ok(sources.every(source => source.type !== 'Organization' && source.type !== 'Public event'));
 });
 test('failed inference retains reservation and never retries', async () => {
   const { env, load, fetcher } = fixture();

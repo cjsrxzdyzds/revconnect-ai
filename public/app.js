@@ -1,5 +1,5 @@
-import { dateNumber, formatDate, eventInterval, upcomingEvents, parseDiscoveryQuery, searchEvents, recommendGroups, foodStatus, costEvidence, eventNotes, discoveryIntent, timeZoneLabel, isEnglishQuery } from "./discovery.js";
-import { score } from './retrieval.js';
+import { dateNumber, formatDate, eventInterval, parseDiscoveryQuery, searchEvents, recommendGroups, foodStatus, costEvidence, eventNotes, discoveryIntent, timeZoneLabel, isEnglishQuery } from "./discovery.js";
+import { score, planningSources } from './retrieval.js?v=2026-09-29-4';
 
 const $ = (selector) => document.querySelector(selector);
 const state = { data: null, events: [], eventSource: "", eventFetchedAt: "", feedLimit: 300, feedDays: 60, lastQuestion: "" };
@@ -36,10 +36,6 @@ function sourceLink(url, label = "View source ↗") {
 function trim(value, length = 300) {
   const text = String(value || "").trim();
   return text.length > length ? `${text.slice(0, length).trimEnd()}…` : text;
-}
-
-function currentEvents() {
-  return upcomingEvents(state.events);
 }
 
 function appendReasons(card, reasons) {
@@ -106,62 +102,6 @@ function querySummary(target, parsed, count) {
   target.append(node("p", "meta-line", `${count} ${count === 1 ? "match" : "matches"} in the available public feed. ${parsed.labels.length ? "These are the conditions understood from your question." : "Add an interest, date or time window to narrow the list."}`));
 }
 
-function renderGroups() {
-  if (!state.data) return;
-  const query = $("#group-search").value.trim();
-  const starterNames = new Set(state.data.starterGroups.map((group) => group.org_name.toLowerCase()));
-  const all = recommendGroups(state.data.groups, state.events, query);
-  if (!query) all.sort((a, b) => Number(starterNames.has(b.name.toLowerCase())) - Number(starterNames.has(a.name.toLowerCase())) || a.name.localeCompare(b.name));
-  const matches = all.slice(0, 6);
-  const target = $("#group-results");
-  target.replaceChildren(...matches.map(groupCard));
-  if (!matches.length) target.append(node("p", "empty-state", "No published match. Try a group name or an interest such as AI, consulting, culture, or service."));
-  $("#group-count").textContent = state.data.groups.length.toLocaleString();
-  $("#group-note").textContent = `Showing ${matches.length} of ${all.length} matches across ${state.data.groups.length} public organizations. Snapshot: ${shortDate(state.data.groupsFetchedAt)}. Recommendations match published interests; membership requirements are unverified. Recent events cover only the available feed.`;
-}
-
-function renderEvents() {
-  const query = $("#event-search").value.trim();
-  const parsed = parseDiscoveryQuery(query, { date: $("#event-date").value, start: $("#event-start").value, end: $("#event-end").value, food: $("#event-food").checked });
-  const all = searchEvents(state.events, parsed);
-  const matches = all.slice(0, 6);
-  const target = $("#event-results");
-  querySummary($("#event-query-summary"), parsed, all.length);
-  target.replaceChildren(...matches.map(eventCard));
-  if (!matches.length) target.append(node("p", "empty-state", parsed.invalid ? "Adjust the conditions above to search again." : "No event fits every understood condition in this feed. Change the day, widen the time window or browse the full RevConnect calendar."));
-  $("#event-count").textContent = String(all.length);
-  $("#event-note").textContent = `${state.eventSource === "live" ? "Live public feed" : "Saved public snapshot"}, checked ${shortDate(state.eventFetchedAt)}. Up to ${state.feedLimit} feed items across ${state.feedDays} days. Showing ${matches.length} of ${all.length} matches. Time windows require a known start, end and GW time zone. Confirm ticket options and availability on RevConnect.`;
-}
-
-function guidanceItem(title, description, url, secondary = "") {
-  const item = node("article", "guidance-item");
-  item.append(node("h4", "", title), node("p", "", trim(description, 350)));
-  if (secondary) item.append(node("p", "secondary", trim(secondary, 300)));
-  item.append(sourceLink(url));
-  return item;
-}
-
-function renderGuidance() {
-  const data = state.data;
-  $("#funding-list").replaceChildren(...data.fundingPrograms.map((row) => guidanceItem(row.program, row.best_for, row.source_url, row.timing)));
-  $("#howto-list").replaceChildren(...data.howto.map((row) => guidanceItem(row.topic, row.summary, row.source_url, row.steps)));
-  $("#resource-list").replaceChildren(...data.resources.map((row) => guidanceItem(row.resource, row.description, row.source_url, row.contact)));
-  renderDeadlines();
-}
-
-function renderDeadlines() {
-  if (!state.data) return;
-  const query = $("#deadline-search").value.trim();
-  const rows = state.data.deadlines
-    .map((row) => ({ ...row, rank: query ? score(query, row.topic, "", `${row.deadline} ${row.timeline}`) : 1 }))
-    .filter((row) => !query || row.rank > 0)
-    .sort((a, b) => b.rank - a.rank)
-    .slice(0, query ? 12 : 6);
-  const target = $("#deadline-list");
-  target.replaceChildren(...rows.map((row) => guidanceItem(row.topic, row.deadline, row.source_url, row.timeline)));
-  if (!rows.length) target.append(node("p", "empty-state", "No matching timeline in the guide. Ask Org Help for current requirements."));
-}
-
 function renderRuleAnswer(question) {
   if (!state.data) return;
   state.lastQuestion = question;
@@ -177,7 +117,7 @@ function renderRuleAnswer(question) {
     querySummary(target, parsed, matches.length);
     const grid = node("div", "answer-list");
     grid.append(...matches.slice(0, 3).map(eventCard));
-    if (!matches.length) grid.append(node("p", "empty-state", "No matching public event. Use the date and time controls under Discover to adjust your conditions."));
+    if (!matches.length) grid.append(node("p", "empty-state", "No matching public event in this limited feed. Check the full RevConnect calendar for current listings."));
     target.append(grid);
     return;
   }
@@ -192,12 +132,11 @@ function renderRuleAnswer(question) {
   }
   const data = state.data;
   const candidates = [
+    ...planningSources,
     ...data.howto.map((row) => ({ type: "CampusGroups how-to", title: row.topic, body: `${row.summary} ${row.steps}`, keywords: row.audience, url: row.source_url })),
     ...data.deadlines.map((row) => ({ type: "Deadline", title: row.topic, body: `${row.deadline}. ${row.timeline}`, keywords: "timing deadline due submit apply", url: row.source_url })),
     ...data.fundingPrograms.map((row) => ({ type: "Funding", title: row.program, body: `${row.best_for} ${row.timing}`, keywords: "funding money sga allocation sponsorship", url: row.source_url })),
     ...data.resources.map((row) => ({ type: "Campus support", title: row.resource, body: `${row.description} Contact: ${row.contact}`, keywords: row.keywords, url: row.source_url })),
-    ...data.groups.map((row) => ({ type: "Organization", title: row.name, body: row.description, keywords: `${row.category} ${row.keywords}`, url: row.url })),
-    ...currentEvents().map((row) => ({ type: "Public event", title: row.title, body: `${row.date} ${row.time}. ${row.host}. ${row.location}. ${row.description}`, keywords: row.category, url: row.url })),
   ];
   const ranked = candidates.map((item) => ({ ...item, rank: score(question, item.title, item.keywords, item.body) })).filter((item) => item.rank > 0).sort((a, b) => b.rank - a.rank).slice(0, 3);
   target.replaceChildren();
@@ -259,6 +198,16 @@ function resultRow(label, value, extraClass = "") {
   return row;
 }
 
+function copyTextButton(value, label) {
+  const copy = node("button", "copy-button", label);
+  copy.type = "button";
+  copy.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(value); copy.textContent = "Copied"; }
+    catch { copy.textContent = "Select the text to copy"; }
+  });
+  return copy;
+}
+
 function estimateBudget(form) {
   const attendees = amount(form, "attendees");
   const food = new FormData(form).get("food");
@@ -266,6 +215,8 @@ function estimateBudget(form) {
   const foodRates = food === "none" ? [0, 0, 0] : [Number(assumption.low), Number(assumption.typical), Number(assumption.high)];
   const quoteRaw = new FormData(form).get("foodQuote");
   const quotedFood = food !== "none" && quoteRaw !== "" ? amount(form, "foodQuote") : null;
+  const capRaw = new FormData(form).get("foodCap");
+  const foodCap = food !== "none" && capRaw !== "" ? amount(form, "foodCap") : null;
   const supplies = attendees * amount(form, "supplies");
   const delivery = food === "none" ? 0 : amount(form, "deliveryFees");
   const service = food === "none" ? 0 : amount(form, "serviceFees");
@@ -276,10 +227,23 @@ function estimateBudget(form) {
   const factor = 1 + amount(form, "contingency") / 100;
   const totals = foodRates.map((rate) => ((quotedFood === null ? attendees * rate : quotedFood) + supplies + fixed) * factor);
   const target = $("#budget-result");
-  if (quotedFood === null) target.replaceChildren(node("strong", "", "Planning range"), resultRow("Low estimate", totals[0]), resultRow("Typical estimate", totals[1], "money-total"), resultRow("High estimate", totals[2]));
-  else target.replaceChildren(node("strong", "", "Itemized food quote"), resultRow("Menu subtotal", quotedFood), resultRow("Delivery", delivery), resultRow("Service fee", service), resultRow("Tip", tip), resultRow("Quoted tax", tax), resultRow("Food order total", quotedFood + fees), resultRow("Event planning total", totals[1], "money-total"));
+  if (quotedFood === null) target.replaceChildren(node("strong", "", "Planning range · no vendor quote yet"), resultRow("Low estimate", totals[0]), resultRow("Typical estimate", totals[1], "money-total"), resultRow("High estimate", totals[2]));
+  else target.replaceChildren(node("strong", "", "Actual quote entered"), resultRow("Menu subtotal", quotedFood), resultRow("Delivery", delivery), resultRow("Service fee", service), resultRow("Tip", tip), resultRow("Quoted tax", tax), resultRow("Food order total", quotedFood + fees), resultRow("Event planning total", totals[1], "money-total"));
+  if (foodCap !== null && quotedFood !== null) {
+    const difference = foodCap - quotedFood - fees;
+    target.append(node("div", `cap-status ${difference < 0 ? "cap-over" : "cap-under"}`, difference < 0 ? `${preciseMoney(-difference)} over the food budget cap` : `${preciseMoney(difference)} left under the food budget cap`));
+  } else if (foodCap !== null && food !== "none") target.append(node("div", "cap-status cap-pending", `Food budget cap: ${preciseMoney(foodCap)} · add a quote to compare`));
   const foodNote = food === "none" ? "No food costs are included." : quotedFood === null ? "Food rates are planning assumptions; add an itemized quote to replace them." : `The entered food quote is ${attendees ? preciseMoney((quotedFood + fees) / attendees) : "unallocated"} per attendee before event contingency.`;
   target.append(node("p", "panel-note", `Includes ${preciseMoney(supplies)} in supplies, ${preciseMoney(fixed - fees)} in other entered costs, and ${amount(form, "contingency")}% contingency. ${foodNote} This is not a live vendor price.`));
+  const transfer = node("button", "copy-button transfer-button", "Use total in funding draft");
+  transfer.type = "button";
+  transfer.addEventListener("click", () => {
+    const draft = $("#draft-form");
+    draft.elements.total.value = totals[1].toFixed(2);
+    draft.elements.attendance.value = String(attendees);
+    transfer.textContent = "Added to funding draft";
+  });
+  target.append(transfer);
   if (food !== "none") {
     const details = new FormData(form);
     const provider = details.get("foodProvider");
@@ -288,9 +252,15 @@ function estimateBudget(form) {
     const date = details.get("foodDate");
     const time = details.get("foodTime");
     const zip = String(details.get("foodZip") || "").trim();
+    const location = String(details.get("foodLocation") || "").trim();
     const needs = String(details.get("dietaryNeeds") || "").trim();
-    const suggestion = node("p", "panel-note", `${providerName} planning: ${vendor || "choose a restaurant or store"}; ${date || "set a delivery date"}${time ? ` at ${time}` : " and time"}${zip ? ` to ZIP ${zip}` : ""}. ${needs ? `Dietary needs: ${needs}.` : "Check dietary needs."} Confirm the order minimum, final fees, tax exemption, delivery window, and event flyer or attendee list with Org Help.`);
-    target.append(suggestion);
+    const style = { buffet: "Buffet / shared trays", individual: "Individually packaged meals", group: "Group ordering", other: "Other / undecided" }[details.get("serviceStyle")] || "Undecided";
+    const groupAllowance = provider === "ezcater" && details.get("serviceStyle") === "group" && foodCap !== null && attendees > 0 ? Math.max(0, foodCap - fees) / attendees : null;
+    if (groupAllowance !== null) target.append(node("p", "group-order-note", `Group-order planning allowance: ${preciseMoney(groupAllowance)} per attendee after entered fees. Confirm the actual per-person setting in ezCater.`));
+    const brief = `FOOD ORDER BRIEF\nChannel: ${providerName}\nHeadcount: ${attendees || "Confirm headcount"}\nService: ${style}\nRestaurant or store: ${vendor || "To be selected"}\nDelivery: ${date || "Date needed"} ${time || "Time needed"}; ${location || "Location needed"}${zip ? `; ZIP ${zip}` : ""}\nDietary needs: ${needs || "Confirm with attendees"}\nMenu subtotal: ${quotedFood === null ? "Quote needed" : preciseMoney(quotedFood)}\nDelivery / service / tip / quoted tax: ${preciseMoney(delivery)} / ${preciseMoney(service)} / ${preciseMoney(tip)} / ${preciseMoney(tax)}\nFood order total: ${quotedFood === null ? "Quote needed" : preciseMoney(quotedFood + fees)}\nFood budget cap: ${foodCap === null ? "Not entered" : preciseMoney(foodCap)}${groupAllowance === null ? "" : `\nGroup-order planning allowance: ${preciseMoney(groupAllowance)} per attendee after entered fees; verify in ezCater.`}\nBefore purchase: verify itemized quote, order minimum, dietary options, delivery window, tax exemption, and Org Help approval.`;
+    const briefCard = node("div", "brief-card");
+    briefCard.append(node("span", "panel-overline", "READY FOR A STAFF HANDOFF"), node("strong", "", "Food order brief"), node("div", "draft-text", brief), copyTextButton(brief, "Copy food brief"));
+    target.append(briefCard);
   } else if (supplies) target.append(node("p", "panel-note", "For eligible event supplies, check your office's Amazon purchasing process and share a Wish List for extensive orders."));
 }
 
@@ -311,13 +281,7 @@ function makeDraft(form) {
   target.replaceChildren();
   if (requested > total) target.append(node("p", "", "Check the amounts: requested funding exceeds the total estimated cost."));
   target.append(node("div", "draft-text", draft));
-  const copy = node("button", "copy-button", "Copy draft");
-  copy.type = "button";
-  copy.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(draft); copy.textContent = "Copied"; }
-    catch { copy.textContent = "Select the draft text to copy"; }
-  });
-  target.append(copy);
+  target.append(copyTextButton(draft, "Copy draft"));
 }
 
 async function loadEvents() {
@@ -331,17 +295,15 @@ async function loadEvents() {
     state.eventFetchedAt = payload.fetchedAt;
     state.feedLimit = payload.feedLimit || 60;
     state.feedDays = payload.feedDays || 60;
-    $("#event-status").textContent = `Public events: live feed checked ${shortDate(payload.fetchedAt)}`;
+    $("#event-status").textContent = `Planning sources checked ${shortDate(payload.fetchedAt)}`;
   } catch {
     state.events = state.data.events || [];
     state.eventSource = "snapshot";
     state.eventFetchedAt = state.data.eventsFetchedAt;
     state.feedLimit = state.data.eventFeedLimit || 60;
     state.feedDays = state.data.eventFeedDays || 60;
-    $("#event-status").textContent = `Public events: saved snapshot from ${shortDate(state.eventFetchedAt)}`;
+    $("#event-status").textContent = `Planning sources last saved ${shortDate(state.eventFetchedAt)}`;
   }
-  renderEvents();
-  renderGroups();
   if (state.lastQuestion) ask(state.lastQuestion);
 }
 
@@ -351,34 +313,22 @@ async function init() {
     if (!response.ok) throw new Error("data unavailable");
     state.data = await response.json();
   } catch {
-    $("#group-status").textContent = "Directory unavailable";
+    $("#group-status").textContent = "Published guidance unavailable";
     $("#event-status").textContent = "Please try again later";
     $("#ask-results").replaceChildren(node("p", "empty-state", "The public guidance data could not be loaded."));
     if (budgetTouched) $("#budget-result").textContent = "Planning assumptions are unavailable. Please try again later.";
     return;
   }
-  $("#group-status").textContent = `${state.data.groups.length.toLocaleString()} public organizations · snapshot ${shortDate(state.data.groupsFetchedAt)}`;
+  $("#group-status").textContent = `Published guidance snapshot ${shortDate(state.data.groupsFetchedAt)}`;
   state.events = state.data.events || [];
   state.eventSource = "snapshot";
   state.eventFetchedAt = state.data.eventsFetchedAt;
   state.feedLimit = state.data.eventFeedLimit || 60;
   state.feedDays = state.data.eventFeedDays || 60;
-  renderGroups();
-  renderEvents();
-  renderGuidance();
   if (budgetTouched) estimateBudget($("#budget-form"));
   loadEvents();
 }
 
-$("#group-search").addEventListener("input", renderGroups);
-$("#event-search").addEventListener("input", renderEvents);
-for (const id of ["event-date", "event-start", "event-end", "event-food"]) $(`#${id}`).addEventListener("change", renderEvents);
-$("#event-reset").addEventListener("click", () => {
-  for (const id of ["event-search", "event-date", "event-start", "event-end"]) $(`#${id}`).value = "";
-  $("#event-food").checked = false;
-  renderEvents();
-});
-$("#deadline-search").addEventListener("input", renderDeadlines);
 $("#ask-form").addEventListener("submit", (event) => { event.preventDefault(); ask($("#ask-input").value.trim()); });
 document.querySelectorAll("[data-question]").forEach((button) => button.addEventListener("click", () => { $("#ask-input").value = button.dataset.question; ask(button.dataset.question); }));
 let budgetTouched = false;

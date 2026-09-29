@@ -1,16 +1,16 @@
 # RevConnectAI
 
-A retrieval-augmented assistant for George Washington University student
-organization support. It answers policy and how-to questions from GW's student
-organization handbook, SGA bylaws, and funding guidance; recommends
-organizations and upcoming events from GW's live CampusGroups feeds; and helps
-plan event budgets and funding applications.
+A planning assistant for George Washington University student organizations.
+The web edition helps students estimate event costs, compare an entered catering
+quote with a food budget cap, prepare a food order brief and funding narrative,
+and assemble reimbursement materials. It can also answer planning questions
+against published sources.
 
 RevConnectAI provides guidance, not decisions. It does not approve funding,
 purchases, contracts, reimbursements, travel, or events. Current GW policy and
 authorized staff control.
 
-![RevConnectAI](screenshots_2026-07-28/03-ask-answered.png)
+![RevConnectAI planning home](docs/images/planning-home-2026-09-29.jpg)
 
 ## What is not in this repository
 
@@ -34,11 +34,14 @@ python3 -m venv .venv
 ## Cloudflare deployment
 
 The free web edition lives in `public/` and is configured as a Cloudflare Worker
-with static assets at `cjsrxzdyzds.com`. It keeps organization search, public
-event discovery, published how-to and funding guidance, a budget estimate, and
-an application draft. Its question box ranks matching public records; it does
-not run the notebook's local language or embedding models. The original
-Python/Gradio prototype remains available through `run_local.py`.
+with static assets at `cjsrxzdyzds.com`. Its landing page focuses on planning:
+event budget, catering quote check, copyable food handoff, funding narrative,
+planning questions, and the reimbursement preparation tool. Directory and event
+listing panels were removed because RevConnect already provides those browsing
+functions. Ask can still retrieve relevant public records and add a bounded
+Cloudflare Workers AI summary when the free-tier gate passes. It does not run
+the notebook's local language or embedding models. The original Python/Gradio
+prototype remains available through `run_local.py`.
 
 The organization directory and fallback event list are sanitized snapshots in
 `public/data.json`. The Worker fetches up to 300 nearest public events from the
@@ -85,14 +88,15 @@ cd RevConnectAI_v5_API_Prototype && python api_connection_smoke_test.py
 
 As of 2026-07-28 that reports 722 organizations and 22 upcoming events.
 
-### Guided discovery prototype
+### Public-source question support
 
-The Ask and Discover sections accept English questions such as
+The Ask section accepts English questions such as
 `Cultural events on Sunday from 4-8pm` and
 `Recommend groups for AI and consulting`. A local parser recognizes supported interests,
 weekdays, ISO dates, time windows, food provision, explicit free entry, and online
 formats. Results show the interpreted conditions and evidence from published
-records. Date and time controls override the question's date and time settings.
+records. Dedicated public directory and event-list controls are no longer on the
+landing page; the official RevConnect site remains the full browsing destination.
 Discovery matching is deterministic. The Ask endpoint can add a bounded
 Cloudflare Workers AI summary of matching public records when the account's
 free-tier status is verified; it falls back to the deterministic results when
