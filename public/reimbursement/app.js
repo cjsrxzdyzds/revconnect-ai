@@ -1,13 +1,16 @@
 import * as pdfjs from "./vendor/pdf.mjs";
 import { buildCombinedPdf } from "./pdf-builder.js";
 import { buildConcurPlan, evaluateReimbursement, suggestReceipt, suggestRequest } from "./core.js";
-import { pageNeedsOcr, recognizeImage, recognizePdfPage, stopOcr } from "./ocr.js";
+import { extractionScore, pageNeedsOcr, recognizeImage, recognizePdfPage, stopOcr } from "./ocr.js";
+
+import { imageCoverage, textFromItems } from "./extraction.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdf.worker.mjs", import.meta.url).href;
 
 const $ = (selector) => document.querySelector(selector);
 const files = { request: null, receipts: [], support: [] };
 let pdfUrl = "";
+const requestHintValues = new Map();
 const ids = ["request-id", "org-abbrev", "organization", "recipient", "submitter", "submitted-date", "requested-amount", "budget-amount", "budget-balance", "revenue-amount", "revenue-balance", "concur-month", "report-date", "gwid", "support-type", "request-verified", "parties-verified", "budget-verified", "revenue-verified", "concur-month-verified", "report-date-verified", "support-verified", "blank-gwid-confirmed"];
 const tagNames = ["food", "flowers", "ammunition", "gasoline", "transportation", "hotel"];
 
@@ -45,72 +48,139 @@ const MAX_OCR_PAGES = 20;
 
 function ocrProgress(message) { $("#ocr-status").textContent = message; }
 
-async function extractText(bytes, fileName, useOcr) {
+async function extractText(bytes, fileName, kind, force = false) {
   const loading = pdfjs.getDocument({ data: bytes.slice(), isEvalSupported: false, useSystemFonts: true });
   const document = await loading.promise;
-  const pages = [];
-  const ocrPages = [];
-  const errors = [];
-  let ocrAttempted = 0;
+  const pages = [], diagnostics = [], errors = [];
+  let ocrAttempted = 0, ocrLimitReached = false;
   const totalPages = document.numPages;
   try {
     for (let index = 1; index <= Math.min(totalPages, 60); index++) {
       const page = await document.getPage(index);
-      const content = await page.getTextContent();
-      const rows = new Map();
-      for (const item of content.items) {
-        if (!item.str?.trim()) continue;
-        const y = Math.round(item.transform?.[5] || 0);
-        const row = rows.get(y) || [];
-        row.push({ x: item.transform?.[4] || 0, value: item.str });
-        rows.set(y, row);
-      }
-      let pageText = [...rows.entries()].sort((a, b) => b[0] - a[0]).map(([, row]) => row.sort((a, b) => a.x - b.x).map((part) => part.value).join(" ")).join("\n");
-      if (useOcr && pageNeedsOcr(pageText) && ocrAttempted < MAX_OCR_PAGES) {
-        ocrAttempted++;
-        ocrProgress(`${fileName}: recognizing scanned page ${index} of ${totalPages}…`);
-        try {
-          const scan = await recognizePdfPage(page, (message) => ocrProgress(`${fileName}, page ${index}: ${message}`));
-          if (scan.text.trim()) { pageText = scan.text; ocrPages.push(index); }
-          else errors.push(`page ${index}: no text recognized`);
-        } catch (error) { errors.push(`page ${index}: ${error.message}`); }
-      }
-      pages.push(pageText);
-      page.cleanup();
+      try {
+        const content = await page.getTextContent();
+        const directText = textFromItems(content.items);
+        const viewport = page.getViewport({ scale: 1 });
+        let coverage = 0;
+        if (kind !== "support") {
+          try { coverage = imageCoverage(await page.getOperatorList(), pdfjs.OPS, viewport.width*viewport.height); }
+          catch { /* Sparse-text fallback still works without the image operator list. */ }
+        }
+        let pageText = directText;
+        const detail = { page: index, method: "Selectable text", directText, text: directText };
+        if (kind !== "support" && pageNeedsOcr(directText, { kind, imageCoverage: coverage, force })) {
+          if (ocrAttempted >= MAX_OCR_PAGES) { ocrLimitReached = true; detail.method += "; OCR limit reached"; }
+          else {
+            ocrAttempted++;
+            ocrProgress(`${fileName}: reading visible page ${index} of ${totalPages}…`);
+            try {
+              const scan = await recognizePdfPage(page, (message) => ocrProgress(`${fileName}, page ${index}: ${message}`), kind);
+              detail.ocrText = scan.text;
+              detail.confidence = scan.confidence;
+              detail.rotation = scan.rotation;
+              const preferScan = force || coverage >= .20 || !directText.trim() || extractionScore(scan.text, kind) >= extractionScore(directText, kind);
+              if (scan.text.trim() && scan.confidence >= 40 && preferScan) {
+                pageText = scan.text;
+                detail.method = `Local OCR (${Math.round(scan.confidence)}% OCR confidence, layout ${scan.mode}${scan.rotation ? `, rotated ${scan.rotation}°` : ""})`;
+              } else detail.method = `${directText.trim() ? "Selectable text retained" : "Manual entry needed"}; OCR checked (${Math.round(scan.confidence)}% OCR confidence)`;
+              if (scan.confidence < 40) errors.push(`page ${index}: low OCR confidence; inspect the original`);
+              if (!scan.text.trim()) errors.push(`page ${index}: no OCR text recognized`);
+            } catch (error) { errors.push(`page ${index}: ${error.message}`); detail.method += "; OCR failed"; }
+          }
+        }
+        detail.text = pageText;
+        pages.push(pageText); diagnostics.push(detail);
+      } finally { page.cleanup(); }
     }
-  } finally {
-    await document.destroy();
-  }
-  return { text: pages.join("\n\n"), ocrPages, errors, truncated: totalPages > 60, ocrLimitReached: ocrAttempted === MAX_OCR_PAGES && totalPages > MAX_OCR_PAGES };
+  } finally { await document.destroy(); }
+  return { text: pages.join("\n\n"), diagnostics, errors, truncated: totalPages > 60, ocrLimitReached };
 }
 
-async function loadFile(file, useOcr = true) {
+async function loadFile(file, kind = "receipt", force = false) {
   limitFile(file);
   const bytes = new Uint8Array(await file.arrayBuffer());
   const hash = await sha256(bytes);
-  let extractedText = "";
-  let note = "";
+  let extractedText = "", note = "", diagnostics = [];
   if (file.name.toLowerCase().endsWith(".pdf")) {
     try {
-      const result = await extractText(bytes, file.name, useOcr);
-      extractedText = result.text;
-      if (result.ocrPages.length) note = `Local English OCR on page${result.ocrPages.length === 1 ? "" : "s"} ${result.ocrPages.join(", ")}; verify against the original.`;
-      if (result.errors.length) note += `${note ? " " : ""}OCR needs manual review (${result.errors.join("; ")}).`;
+      const result = await extractText(bytes, file.name, kind, force);
+      extractedText = result.text; diagnostics = result.diagnostics;
+      note = `${diagnostics.length} page(s) inspected; ${diagnostics.filter((page) => page.ocrText !== undefined).length} checked with local OCR. Suggestions require verification.`;
+      if (result.errors.length) note += ` OCR needs manual review (${result.errors.join("; ")}).`;
       if (result.ocrLimitReached) note += " OCR is limited to 20 pages per file; inspect remaining pages manually.";
       if (result.truncated) note += " Only the first 60 pages were inspected.";
       if (!extractedText.trim()) note += " No text found; enter and verify facts manually.";
-    } catch (error) {
-      note = `Text extraction unavailable (${error.message}); inspect the file and enter facts manually.`;
-    }
-  } else if (useOcr) {
+    } catch (error) { note = `Text extraction unavailable (${error.message}); inspect the file and enter facts manually.`; }
+  } else if (kind !== "support") {
     ocrProgress(`${file.name}: recognizing image…`);
     try {
-      const result = await recognizeImage(file, (message) => ocrProgress(`${file.name}: ${message}`));
-      extractedText = result.text;
+      const result = await recognizeImage(file, (message) => ocrProgress(`${file.name}: ${message}`), kind);
+      extractedText = result.confidence >= 40 ? result.text : "";
+      diagnostics = [{ page: 1, method: `Local OCR (${Math.round(result.confidence)}% OCR confidence, layout ${result.mode})`, text: extractedText, ocrText: result.text, directText: "" }];
       note = extractedText.trim() ? "Local English OCR; verify every field against the original image." : "OCR found no text; inspect and enter facts manually.";
     } catch (error) { note = `OCR unavailable (${error.message}); inspect and enter facts manually.`; }
   } else note = "Supporting image: inspect visually; text is not required for extraction.";
-  return { name: file.name, mime: file.type, bytes, sha256: hash, extractedText, note };
+  return { name: file.name, mime: file.type, bytes, sha256: hash, extractedText, note, diagnostics };
+}
+
+function appendExtraction(target, file) {
+  target.append(text("p", file.note, "hint"));
+  for (const page of file.diagnostics || []) {
+    const details = document.createElement("details");
+    details.className = "extracted-page";
+    details.append(text("summary", `Page ${page.page} · ${page.method}`));
+    details.append(text("pre", page.text || "No reliable text recognized. Inspect the original and enter facts manually.", "extracted-text"));
+    if (page.ocrText !== undefined && page.ocrText !== page.text) {
+      const alternate = document.createElement("details");
+      alternate.append(text("summary", "Compare selectable text and OCR"));
+      alternate.append(text("pre", `SELECTABLE TEXT\n${page.directText}\n\nOCR\n${page.ocrText || "No text recognized."}`, "extracted-text"));
+      details.append(alternate);
+    }
+    target.append(details);
+  }
+}
+
+function applyRequestHints() {
+  const suggestion = suggestRequest(files.request.extractedText);
+  for (const [id, key] of Object.entries({ "request-id": "requestId", "requested-amount": "requestedAmount", "budget-amount": "budgetAmount", "revenue-amount": "revenueAmount", recipient: "recipient", organization: "organization", submitter: "submitter", "submitted-date": "submittedDate" })) {
+    if (!fieldValue(id) || fieldValue(id) === requestHintValues.get(id)) {
+      $(`#${id}`).value = suggestion[key] || "";
+      requestHintValues.set(id, suggestion[key] || "");
+    }
+  }
+  for (const id of ["request-verified", "parties-verified", "budget-verified", "revenue-verified", "support-verified"]) $(`#${id}`).checked = false;
+  const details = $("#request-evidence");
+  details.classList.remove("hidden");
+  const target = details.querySelector("div");
+  target.replaceChildren(text("p", "Suggestions are unverified; compare every field to the original printout."), text("p", suggestion.evidence.join("\n")));
+  appendExtraction(target, files.request);
+}
+
+let extractionQueue = Promise.resolve();
+function runExtraction(action) {
+  extractionQueue = extractionQueue.then(async () => {
+    const controls = [...document.querySelectorAll('input[type="file"], #retry-ocr, #generate-pdf')];
+    controls.forEach((control) => { control.disabled = true; });
+    try { await action(); }
+    catch (error) { showError(error); }
+    finally { controls.forEach((control) => { control.disabled = false; }); ocrProgress(""); }
+  });
+  return extractionQueue;
+}
+
+async function retryOcr() {
+  if (!files.request && !files.receipts.length) { showError("Select a printout or receipt before retrying OCR."); return; }
+  clearError(); invalidatePdf();
+  const previous = receiptValues();
+  if (files.request) {
+    files.request = await loadFile(new File([files.request.bytes], files.request.name, { type: files.request.mime }), "request", true);
+    applyRequestHints(); $("#request-verified").checked = false;
+  }
+  for (let i = 0; i < files.receipts.length; i++) {
+    const file = files.receipts[i];
+    files.receipts[i] = await loadFile(new File([file.bytes], file.name, { type: file.mime }), "receipt", true);
+  }
+  renderReceipts(previous); fileStatus(); renderReview();
 }
 
 function invalidatePdf() {
@@ -158,7 +228,7 @@ function check(label, name, active = false) {
   return wrapper;
 }
 
-function renderReceipts() {
+function renderReceipts(previous = []) {
   const container = $("#receipt-cards");
   container.replaceChildren();
   if (!files.receipts.length) {
@@ -167,6 +237,8 @@ function renderReceipts() {
   }
   files.receipts.forEach((file, index) => {
     const hint = suggestReceipt(file.extractedText);
+    const saved = previous[index];
+    if (saved) for (const key of ["vendor", "purchaseDate", "total"]) if (saved[key]) hint[key] = saved[key];
     const card = document.createElement("article");
     card.className = "receipt-card";
     card.dataset.index = String(index);
@@ -211,10 +283,32 @@ function renderReceipts() {
       hint.purchaseDate ? `Date candidate: ${hint.purchaseDate}` : "No purchase date candidate found.",
       hint.paidEvidence ? "Paid/payment wording found; inspect the original page." : "No paid marker found in selectable text.",
       hint.cardEvidence ? "Card-last-four pattern found; inspect the original page." : "No card-last-four marker found in selectable text.",
-      file.note,
     ].filter(Boolean).join("\n");
     evidence.append(info);
+    if (hint.totalCandidates.length > 1) {
+      const options = document.createElement("div"); options.className = "total-options";
+      for (const candidate of hint.totalCandidates) {
+        const button = text("button", `Use $${candidate.amount}`, "secondary"); button.type = "button";
+        button.title = candidate.line;
+        button.addEventListener("click", () => {
+          card.querySelector('[name="total"]').value = candidate.amount;
+          card.querySelector('[name="verified"]').checked = false;
+          invalidatePdf(); renderReview();
+        });
+        options.append(button, text("span", candidate.line, "hint"));
+      }
+      evidence.append(options);
+    }
+    appendExtraction(evidence, file);
     card.append(evidence);
+    if (saved) {
+      for (const input of card.querySelectorAll("input")) {
+        if (input.name === "verified") input.checked = false;
+        else if (input.name.startsWith("tag-")) input.checked = saved.tags.includes(input.name.slice(4));
+        else if (input.type === "checkbox") input.checked = Boolean(saved[input.name]);
+        else if (saved[input.name]) input.value = saved[input.name];
+      }
+    }
     container.append(card);
   });
 }
@@ -302,22 +396,12 @@ async function onRequestFile() {
   invalidatePdf();
   const selected = $("#request-file").files[0];
   files.request = null;
+  $("#request-evidence").classList.add("hidden");
   if (!selected) { fileStatus(); renderReview(); return; }
   try {
     if (!selected.name.toLowerCase().endsWith(".pdf")) throw new Error("The CampusGroups printout must be a PDF.");
-    files.request = await loadFile(selected);
-    const suggestion = suggestRequest(files.request.extractedText);
-    fillIfEmpty("request-id", suggestion.requestId);
-    fillIfEmpty("requested-amount", suggestion.requestedAmount);
-    fillIfEmpty("budget-amount", suggestion.budgetAmount);
-    fillIfEmpty("revenue-amount", suggestion.revenueAmount);
-    fillIfEmpty("recipient", suggestion.recipient);
-    fillIfEmpty("organization", suggestion.organization);
-    fillIfEmpty("submitter", suggestion.submitter);
-    fillIfEmpty("submitted-date", suggestion.submittedDate);
-    const details = $("#request-evidence");
-    details.classList.toggle("hidden", !suggestion.evidence.length && !files.request.note);
-    details.querySelector("div").textContent = ["Suggestions are unverified; inspect the actual printout.", ...suggestion.evidence, files.request.note].filter(Boolean).join("\n");
+    files.request = await loadFile(selected, "request");
+    applyRequestHints();
   } catch (error) { showError(error); }
   ocrProgress("");
   fileStatus(); renderReview();
@@ -330,7 +414,7 @@ async function onManyFiles(kind, selector) {
   try {
     const selected = [...$(selector).files];
     if (selected.length > 20) throw new Error("Select no more than 20 files in one category.");
-    for (const file of selected) files[kind].push(await loadFile(file, kind === "receipts"));
+    for (const file of selected) files[kind].push(await loadFile(file, kind === "receipts" ? "receipt" : "support"));
   } catch (error) { showError(error); }
   ocrProgress("");
   if (kind === "receipts") renderReceipts();
@@ -381,9 +465,10 @@ for (const id of ids) {
 }
 $("#receipt-cards").addEventListener("input", () => { invalidatePdf(); renderReview(); });
 $("#receipt-cards").addEventListener("change", () => { invalidatePdf(); renderReview(); });
-$("#request-file").addEventListener("change", onRequestFile);
-$("#receipt-files").addEventListener("change", () => onManyFiles("receipts", "#receipt-files"));
-$("#support-files").addEventListener("change", () => onManyFiles("support", "#support-files"));
+$("#request-file").addEventListener("change", () => runExtraction(onRequestFile));
+$("#receipt-files").addEventListener("change", () => runExtraction(() => onManyFiles("receipts", "#receipt-files")));
+$("#support-files").addEventListener("change", () => runExtraction(() => onManyFiles("support", "#support-files")));
+$("#retry-ocr").addEventListener("click", () => runExtraction(retryOcr));
 $("#generate-pdf").addEventListener("click", generatePdf);
 $("#pdf-reviewed").addEventListener("change", () => $("#download-pdf").classList.toggle("hidden", !checked("pdf-reviewed")));
 $("#concur-plan").addEventListener("click", async (event) => {

@@ -27,8 +27,8 @@ export function isoDate(value) {
   let match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
   if (match) [, year, month, day] = match;
   else {
-    match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text);
-    if (match) [, month, day, year] = match;
+    match = /^(\d{1,2})[/-](\d{1,2})[/-](\d{4}|\d{2})$/.exec(text);
+    if (match) { [, month, day, year] = match; if (year.length === 2) year = `20${year}`; }
     else {
       const named = /^(?:(\d{1,2})\s+([A-Za-z]{3,9})|([A-Za-z]{3,9})\s+(\d{1,2})),?\s+(\d{4})$/.exec(text);
       if (!named) return "";
@@ -68,70 +68,93 @@ function shortEvidence(text, expression) {
   return text.slice(start, Math.min(text.length, match.index + match[0].length + 36)).replace(/\s+/g, " ").trim();
 }
 
-export function suggestRequest(text) {
-  const id = firstMatch(text, [/(?:Transaction\s*ID|Request\s*(?:ID|#|Number))\s*[:#-]?\s*(\d{3,8})/i]);
-  const transactionBlock = id ? (text.split(/\n+/).slice(Math.max(0, text.split(/\n+/).findIndex((line) => new RegExp(`\\bTransaction\\s*ID\\s*${id}\\b`, "i").test(line))), 90).join("\n").split(/Payment Request Form/i)[0]) : "";
-  const budgetAmount = firstMatch(transactionBlock, [/^Allocated\s+-?\$([\d,]+\.\d{2})\b/im]);
-  const revenueAmount = firstMatch(transactionBlock, [/^Group\s*Money\s+\$([\d,]+\.\d{2})\b/im]);
-  let amount = firstMatch(text, [/(?:Amount\s*(?:Requested|of\s*Request)|Reimbursement\s*Amount|Total\s*Amount)\s*[:$\s]+([\d,]+\.\d{2})/i]);
-  if (!amount && budgetAmount && revenueAmount) amount = centsToMoney(moneyToCents(budgetAmount) + moneyToCents(revenueAmount));
-  const recipient = firstMatch(text, [/(?:Person\s*to\s*be\s*Reimbursed|Reimbursement\s*Recipient|Payee)\s*[:\s]+([^\n]{3,90})/i]);
-  const organization = firstMatch(text, [/(?:Student\s*Organization|Group\s*Name)\s*[:\s]+([^\n]{3,120})/i]);
-  const submitter = firstMatch(text, [
-    /Submitted\s*by:\s*([^\n(]{3,90}?)\s+on\s+[A-Za-z]{3,9}\s+\d{1,2}/i,
-    /Submitted\s*by:\s*([^\n(]{3,90})\s*\(/i,
-  ]);
-  const submittedDate = isoDate(firstMatch(text, [/Submitted\s*by:[^\n]+?\bon\s+([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4})/i]));
-  return {
-    requestId: id,
-    requestedAmount: amount,
-    budgetAmount,
-    revenueAmount,
-    recipient,
-    organization,
-    submitter,
-    submittedDate,
-    evidence: [
-      id && shortEvidence(text, /(?:Transaction\s*ID|Request\s*(?:ID|#|Number))\s*[:#-]?\s*\d{3,8}/i),
-      amount && shortEvidence(text, /(?:Amount\s*(?:Requested|of\s*Request)|Reimbursement\s*Amount|Total\s*Amount)\s*[:$\s]+[\d,]+\.\d{2}/i),
-    ].filter(Boolean),
-  };
+// Read a label's value on this line or the next nonempty line. A PDF export often
+// separates a question, its required-field asterisk, and its answer.
+function labeledValue(text, labels) {
+  const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+  const prefix = new RegExp(`^(?:${labels})\\b[ \\t]*[:?]?[ \\t]*\\*?[ \\t]*`, 'i');
+  for (let i = 0; i < lines.length; i++) {
+    const cells = lines[i].split(/\t+/);
+    for (let column = 0; column < cells.length; column++) {
+      const match = prefix.exec(cells[column]);
+      if (!match) continue;
+      const inline = cells[column].slice(match[0].length).trim();
+      if (inline) return inline;
+      return lines[i + 1]?.split(/\t+/)[column]?.trim() || '';
+    }
+  }
+  return '';
 }
 
-export function suggestReceipt(text) {
-  const datePattern = '(\\d{1,2}\\/\\d{1,2}\\/\\d{4}|\\d{4}-\\d{2}-\\d{2}|[A-Za-z]{3,9}\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}\\s+[A-Za-z]{3,9}\\s+\\d{4})';
-  const date = firstMatch(text, [
-    new RegExp(`(?:Purchase\\s*Date|Order\\s*Placed|Transaction\\s*Date|Ordered\\s*On)\\s*[:\\s]+${datePattern}`, 'i'),
-    new RegExp(`\\b${datePattern}\\b`, 'i'),
+const DATE_PATTERN = '(\\d{4}-\\d{2}-\\d{2}|\\d{1,2}[/-]\\d{1,2}[/-](?:\\d{4}|\\d{2})|[A-Za-z]{3,9}\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}\\s+[A-Za-z]{3,9}\\s+\\d{4})';
+
+export function suggestRequest(source) {
+  const text = String(source || "").replace(/\r/g, "");
+  // Scope monetary extraction to this transaction, excluding the budget ledger
+  // and the generic instructions earlier/later in the exported printout.
+  const transaction = text.match(/(?:Budget\s*&\s*Payment\s*Request\s*Details|Transaction\s*ID)[\s\S]*?(?=Payment Request Form|$)/i)?.[0] || text;
+  const id = firstMatch(transaction, [/(?:Transaction\s*ID|Request\s*(?:ID|#|Number))[^\n\d]*\n?\s*(\d{3,8})\b/i]);
+  const funding = (label) => firstMatch(transaction, [
+    new RegExp(`${label}[^\\n\\d$]*[-$\\s]+([\\d,]+\\.\\d{2})`, "i"),
+    new RegExp(`-?\\$([\\d,]+\\.\\d{2})\\s*${label}\\b`, "i"),
+  ]);
+  const budgetAmount = funding('Allocated');
+  const revenueAmount = funding('Group\\s*Money');
+  let amount = firstMatch(text, [/(?:Amount\s*(?:Requested|of\s*Request)|Reimbursement\s*Amount|Total\s*Amount)\s*[:*$\s]+([\d,]+\.\d{2})/i]);
+  if (!amount && budgetAmount && revenueAmount) amount = centsToMoney(moneyToCents(budgetAmount) + moneyToCents(revenueAmount));
+  const recipient = labeledValue(text, 'Who\\s+is\\s+being\\s+reimbursed|Person\\s*to\\s*be\\s*Reimbursed|Reimbursement\\s*Recipient');
+  const organization = labeledValue(transaction, 'Group\\s*Name|Student\\s*Organization');
+  const submitted = /Submitted\s*by\s*:\s*([^\n(]+?)(?:\s*\([^\n]*?\))?\s+on\s+([^\n]+)/i.exec(text);
+  const submitter = submitted?.[1]?.trim() || firstMatch(text, [/Submitted\s*by:\s*([^\n(]+)\s*\(/i]);
+  const submittedDate = isoDate(firstMatch(submitted?.[2] || "", [new RegExp(DATE_PATTERN, 'i')]));
+  return { requestId: id, requestedAmount: amount, budgetAmount, revenueAmount, recipient, organization, submitter, submittedDate,
+    evidence: [id && `Request ID: ${id}`, amount && `Requested amount: $${amount}`, recipient && `Recipient: ${recipient}`, organization && `Organization: ${organization}`].filter(Boolean) };
+}
+
+export function suggestReceipt(source) {
+  const text = String(source || "").replace(/\r/g, "");
+  const dateText = text.split(/\n/).filter((line) => !/^\s*\d{1,2}[/-]\d{1,2}[/-]\d{2,4},?\s+\d{1,2}:\d{2}.*(?:Past Orders|Receipt|Invoice|https?)/i.test(line)).join('\n');
+  const date = firstMatch(dateText, [
+    new RegExp(`(?:Purchase\\s*Date|Date\\s*of\\s*Purchase|Order\\s*Placed|Transaction\\s*Date|Ordered\\s*On|Order\\s*completed)\\s*[:*\\s]+${DATE_PATTERN}`, 'i'),
+    new RegExp(`(?:^|\\n)\\s*(?:Date\\s*[:*]\\s*)?${DATE_PATTERN}(?=\\s*(?:$|\\n|at|\\d{1,2}:))`, 'im'),
+    new RegExp(`\\b${DATE_PATTERN}\\b`, 'i'),
   ]);
   const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
-  const totals = lines.flatMap((line) => {
-    if (!/\b(?:grand\s*total|order\s*total|total\s*paid|total)\b/i.test(line) || /\b(?:subtotal|tax|shipping|tip)\b/i.test(line)) return [];
-    const amount = /\$?\s*([\d,]+\.\d{2})\b/.exec(line);
-    return amount ? [{ amount: amount[1], line }] : [];
-  });
-  const paidEvidence = shortEvidence(text, /\b(?:paid|payment\s*(?:completed|received)|charged)\b/i);
-  const cardEvidence = shortEvidence(text, /(?:ending\s*in|last\s*four|last\s*4|\*{4}|x{4})\s*[-:# ]*\d{4}\b/i);
-  const vendor = lines.find((line) => /[A-Za-z]/.test(line) && line.length < 80 && !/\b(?:purchase\s*date|order\s*placed|transaction\s*date|ordered\s*on|total|paid|payment|card|tax|shipping|tip|qty|quantity)\b/i.test(line) && !/\b\d+[.,]\d{2}\b/.test(line)) || "";
+  const candidates = [];
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    const label = /\b(grand\s*total|order\s*total|total\s*(?:paid|charged)|amount\s*(?:paid|charged)|balance\s*paid|total)\b/i.exec(line);
+    if (!label || /\b(?:sub\s*total|subtotal|amount\s*due|balance\s*due)\b/i.test(line)) continue;
+    const tail = line.slice(label.index + label[0].length);
+    if (/\b(?:tax|shipping|tip|savings|discount)\b/i.test(tail)) continue;
+    // Label and value may be separated by a line break. Never steal a subtotal,
+    // tax, item price, or another labeled row from below the total.
+    const valueText = /\d/.test(tail) ? tail : /^\$?\s*[\d,]+\.\d{2}(?:\s*(?:USD|US\$))?\s*$/i.test(lines[index + 1] || '') ? lines[index + 1] : '';
+    const amounts = [...valueText.matchAll(/(?:\$|\b)([\d,]+\.\d{2})\b/g)];
+    for (const amount of amounts) {
+      const cents = moneyToCents(amount[1]);
+      if (cents !== null) candidates.push({ amount: centsToMoney(cents), line: `${line}${valueText === tail ? '' : ` ${valueText}`}`, rank: /paid|charged|grand|order/i.test(label[0]) ? 2 : 1 });
+    }
+  }
+  const totals = [...new Map(candidates.map((item) => [item.amount, item])).values()];
+  // Conflicting final totals always remain a staff choice. Repeated references
+  // to the SAME amount are evidence, not ambiguity.
+  const total = totals.length === 1 ? totals[0].amount : '';
+  const paidEvidence = /\b(?:unpaid|not\s+paid|payment\s*(?:pending|failed))\b/i.test(text) ? '' : lines.filter((line) => !/\b(?:unpaid|not\s+paid|payment\s*(?:pending|failed)|amount\s+due|balance\s+due)\b/i.test(line)).map((line) => shortEvidence(line, /\b(?:paid|payment\s*(?:completed|received)|charged|payments)\b/i)).find(Boolean) || '';
+  const cardEvidence = shortEvidence(text, /(?:(?:ending\s*(?:in)?|last\s*(?:four|4))\s*[-:# ]*|(?:[\u2022\u25cf*Xx][ \t]*){2,}|(?:visa|mastercard|amex|discover|credit\s*card)\s*[-:# +*Xx\u2022\u25cf]*)\d{4}\b/i);
+  const explicitVendor = firstMatch(text, [/\b(?:merchant|vendor|store\s*name)\s*:\s*([^\n]+)/i, /(?:here['’]s\s+your\s+receipt\s+for|receipt\s+from)\s+([^\n]+?)[.]?(?:\n|$)/i]);
+  const vendor = explicitVendor || lines.find((line) => /[A-Za-z]/.test(line) && line.length < 80 && !/\b(?:receipt|invoice|order|purchase|transaction|total|paid|payment|card|tax|shipping|tip|qty|quantity|date|print|page|www|https|thanks|thank\s+you|reorder)\b/i.test(line) && !/\b\d+[.,]\d{2}\b|\d{1,2}[/-]\d{1,2}|\d{1,2}:\d{2}|@/.test(line)) || '';
   const tagHints = [];
   for (const [tag, pattern] of Object.entries({
     food: /\b(?:pizza|restaurant|catering|meal|sandwich|food|beverage)\b/i,
     flowers: /\b(?:flower|bouquet|floral)\b/i,
     ammunition: /\b(?:ammunition|ammo|bullet)\b/i,
     gasoline: /\b(?:gasoline|fuel|gas\s*station)\b/i,
-    transportation: /\b(?:rideshare|uber|lyft|taxi|train|airfare|transportation)\b/i,
+    transportation: /\b(?:rideshare|uber(?!\s*eats)|lyft|taxi|train|airfare|transportation)\b/i,
     hotel: /\b(?:hotel|lodging|accommodation)\b/i,
   })) if (pattern.test(text)) tagHints.push(tag);
-  return {
-    purchaseDate: isoDate(date),
-    vendor,
-    total: totals.length === 1 ? totals[0].amount : "",
-    totalCandidates: totals,
-    paidEvidence,
-    cardEvidence,
-    tagHints,
-    evidence: [date && shortEvidence(text, /\b\d{1,2}\/\d{1,2}\/\d{4}\b|\b\d{4}-\d{2}-\d{2}\b/), paidEvidence, cardEvidence].filter(Boolean),
-  };
+  return { purchaseDate: isoDate(date), vendor, total, totalCandidates: totals, paidEvidence, cardEvidence, tagHints,
+    evidence: [date && `Date wording: ${date}`, paidEvidence, cardEvidence].filter(Boolean) };
 }
 
 function add(issues, severity, field, message) {

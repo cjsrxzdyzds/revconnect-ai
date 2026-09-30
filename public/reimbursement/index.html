@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Reimbursement Preparation | Org Help Finance</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=20260930" />
   <script src="./vendor/pdf-lib.min.js" defer></script>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=20260930"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to case</a>
@@ -16,7 +16,7 @@
       <div><a class="home-link" href="/">RevConnect<span>AI</span></a><span class="eyebrow">ORG HELP FINANCE</span><h1>Reimbursement preparation</h1></div>
       <span class="local-pill">Files stay in this browser session</span>
     </div>
-    <nav class="wrap subnav" aria-label="Main navigation"><a href="/#ask">Ask</a><a href="/#discover">Discover</a><a href="/#guidance">Guidance</a><a href="/#plan">Plan an event</a><a href="/reimbursement/" aria-current="page">Reimbursement</a></nav>
+    <nav class="wrap subnav" aria-label="Main navigation"><a href="/#ask">Ask</a><a href="/#plan">Plan an event</a><a href="/reimbursement/" aria-current="page">Reimbursement</a></nav>
   </header>
   <main class="wrap" id="main">
     <p class="intro">Import the CampusGroups printout, original invoices or receipts, and any event material. The page suggests facts and builds a Concur worksheet; a staff member must verify every source and complete Concur actions.</p>
@@ -30,6 +30,7 @@
         <label class="file-picker"><strong>Event or other support</strong><span>Flyer, attendee list, and supplemental pages</span><input id="support-files" type="file" accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg" multiple /></label>
       </div>
       <div id="file-status" class="file-status" aria-live="polite">No documents selected.</div>
+      <div class="ocr-tools"><button id="retry-ocr" type="button" class="secondary">Retry all pages with OCR</button><p class="help">Use this if a PDF has hidden or broken text. Staff edits are preserved. Missing fields and unchanged automatic suggestions are refreshed; fact checks must be confirmed again.</p></div>
       <div id="ocr-status" class="ocr-status" role="status" aria-live="polite"></div>
     </section>
 
@@ -62,7 +63,7 @@
         <label><input id="support-verified" type="checkbox" /> I checked the event evidence belongs to this request.</label>
         <label><input id="blank-gwid-confirmed" type="checkbox" /> Blank GWID is explicitly approved for this case.</label>
       </div>
-      <details id="request-evidence" class="evidence hidden"><summary>Printout extraction hints</summary><div></div></details>
+      <details id="request-evidence" class="evidence hidden"><summary>Printout extraction and recognized text</summary><div></div></details>
     </section>
 
     <section class="card" aria-labelledby="receipts-title">

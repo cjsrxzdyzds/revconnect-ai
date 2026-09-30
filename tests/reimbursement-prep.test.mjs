@@ -116,3 +116,86 @@ test('combined PDF retains cover fields and every source page', async () => {
   assert.equal(reopened.getForm().getTextField('GWID').getText() || '', '');
   assert.equal(reopened.getForm().getTextField('Amount').getText(), '100.00');
 });
+
+test('CampusGroups question labels and funding columns survive printout layout', () => {
+  const hint = suggestRequest(`Submitted by: Test Officer (officer@example.edu) on Sep 26, 2026 11:46 AM
+Budget ledger Total $900.00
+Budget & Payment Request Details
+Transaction ID\tPayment Type
+4000\tReimbursement
+Group Name\tDescription
+Example Student Association\tFood for GBM
+Group Type\tAmount From
+Student Organization\t-$119.79
+Allocated
+Budget Name
+General Allocation\tAmount From
+$0.00
+Group Money
+Payment Request Form
+Who is being reimbursed?
+
+Test Recipient`);
+  assert.equal(hint.requestId, '4000');
+  assert.equal(hint.organization, 'Example Student Association');
+  assert.equal(hint.recipient, 'Test Recipient');
+  assert.equal(hint.budgetAmount, '119.79');
+  assert.equal(hint.revenueAmount, '0.00');
+  assert.equal(hint.requestedAmount, '119.79');
+  assert.equal(hint.submitter, 'Test Officer');
+  assert.equal(hint.submittedDate, '2026-09-26');
+});
+
+test('receipt totals on another line and repeated final amounts are recognized', () => {
+  const hint = suggestReceipt(`9/7/26, 8:29 PM Past Orders | Delivery
+Here's your receipt for Example Pizza.
+Sep 4, 2026
+Item Subtotal $108.90
+Tax $10.89
+Total
+
+$119.79
+Payments
+Apple Pay Visa ••••1234 $119.79
+Total paid $119.79
+Order completed Sep 4, 2026 at 2:34 PM`);
+  assert.equal(hint.vendor, 'Example Pizza');
+  assert.equal(hint.total, '119.79');
+  assert.equal(hint.totalCandidates.length, 1);
+  assert.equal(hint.purchaseDate, '2026-09-04');
+  assert.ok(hint.paidEvidence);
+  assert.ok(hint.cardEvidence);
+});
+
+test('conflicting final amounts and unpaid wording never become verified facts', () => {
+  const hint = suggestReceipt('Example Store\nPurchase Date: 09-04-26\nSubtotal $40.00\nTotal $50.00\nTotal paid $60.00\nPayment pending\nNot paid');
+  assert.equal(hint.total, '');
+  assert.equal(hint.totalCandidates.length, 2);
+  assert.equal(hint.purchaseDate, '2026-09-04');
+  assert.equal(hint.paidEvidence, '');
+  assert.equal(suggestReceipt('Total\nTax $2.00\nItem $12.00').total, '');
+});
+
+test('hybrid pages and incomplete receipt text trigger OCR despite a text header', () => {
+  const header = 'This selectable export header contains many alphabetic characters but its actual receipt is embedded as a scanned image.';
+  assert.equal(pageNeedsOcr(header, { imageCoverage: .8 }), true);
+  assert.equal(pageNeedsOcr(header, { kind: 'receipt' }), true);
+  assert.equal(pageNeedsOcr(header, { force: true }), true);
+  assert.equal(pageNeedsOcr(header, { imageCoverage: .01 }), false);
+});
+
+test('layout reconstruction groups nearby baselines and preserves column gaps', async () => {
+  const { textFromItems, imageCoverage } = await import('../public/reimbursement/extraction.js');
+  const item = (str, x, y, width) => ({ str, transform: [10, 0, 0, 10, x, y], height: 10, width });
+  assert.equal(textFromItems([item('Group', 10, 100, 25), item('Name', 38, 101, 25), item('Description', 250, 100, 50), item('Example Org', 10, 80, 90), item('Food', 250, 80, 30)]), 'Group Name\tDescription\nExample Org\tFood');
+  const ops = { save: 1, transform: 2, paintImageXObject: 3, restore: 4 };
+  assert.equal(imageCoverage({ fnArray: [1, 2, 3, 4], argsArray: [[], [50, 0, 0, 80, 0, 0], [], []] }, ops, 10000), .4);
+});
+
+test('print timestamps are excluded and OCR mask substitutions stay hints only', () => {
+  const hint = suggestReceipt('9/7/26, 8:29 PM Past Orders | Receipt\nExample Pizza\nSep 4, 2026\nTotal $119.79\nPayments\nApple Pay Visa +---1234 $119.79\nUber Eats');
+  assert.equal(hint.purchaseDate, '2026-09-04');
+  assert.ok(hint.cardEvidence);
+  assert.equal(hint.tagHints.includes('transportation'), false);
+  assert.equal('cardLastFourPresent' in hint, false);
+});

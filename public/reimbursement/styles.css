@@ -7,3 +7,5 @@
 .subnav a[aria-current="page"]{color:#f2d99f;border-bottom:2px solid #f2d99f}
 .subnav a:hover{color:#fff}
 .ocr-status{margin-top:8px;color:#0b7198;font-size:12px;font-weight:700;min-height:1em}
+
+.ocr-tools{display:flex;align-items:center;gap:15px;margin-top:16px}.ocr-tools .help{margin:0;max-width:650px}.extracted-page{margin:12px 0;padding:10px;background:#f0f5f6;border-radius:6px}.extracted-text{max-height:330px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.65 ui-monospace,monospace;color:#234858;background:white;border:1px solid #d6e2e5;padding:12px}.total-options{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}.evidence .total-options{white-space:normal}button:disabled{opacity:.55;cursor:wait}@media(max-width:530px){.ocr-tools{align-items:flex-start;flex-direction:column}}

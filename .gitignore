@@ -30,3 +30,6 @@ Phase-by-Phase Implementation Plan.docx
 RevConnectAI_v5_API_Prototype/RevConnectAI_Knowledge_Base_v4.zip
 
 .DS_Store
+
+# Local OCR fixtures and rendered private source pages.
+/tmp/pdfs/
