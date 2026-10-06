@@ -89,6 +89,7 @@ function jsonResponse(body, status = 200, maxAge = 0) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/ocr/config') return jsonResponse({ enabled: false }, 200);
     if (url.pathname === '/api/ask') {
       return handleAsk(request, env, async () => {
         const snapshot = await env.ASSETS.fetch(new Request(`${url.origin}/data.json`));

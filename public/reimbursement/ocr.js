@@ -1,5 +1,6 @@
-// OCR stays in the browser; engine and language data come from this site.
+// Use cloud OCR when enabled; local fallback loads engine and language data from this site.
 import { suggestReceipt, suggestRequest } from './core.js';
+import { recognizeCloudCanvas } from './cloud-ocr.js';
 let workerPromise;
 let currentProgress;
 let queue = Promise.resolve();
@@ -75,6 +76,14 @@ export function recognizeCanvas(canvas, onProgress, kind = 'receipt') {
   // A Tesseract worker cannot safely run overlapping recognize/setParameters jobs.
   const job = queue.then(async () => {
     currentProgress = onProgress;
+    let cloudError;
+    try {
+      const result = await recognizeCloudCanvas(canvas, onProgress);
+      if (result) return result;
+    } catch (error) {
+      cloudError = error.message;
+      onProgress?.('Cloud OCR unavailable; trying local OCR…');
+    }
     const engine = await worker();
     let best;
     const score = (item) => extractionScore(item.text, kind)*18 + item.confidence*.5 + Math.min(item.text.replace(/[^A-Za-z0-9]/g, '').length, 300)/30;
@@ -105,7 +114,7 @@ export function recognizeCanvas(canvas, onProgress, kind = 'receipt') {
         if (best.confidence >= 82 && extractionScore(best.text, kind) >= 4) break;
       }
     }
-    return best;
+    return { ...best, cloudError };
   }).finally(() => { currentProgress = undefined; });
   queue = job.catch(() => {});
   return job;

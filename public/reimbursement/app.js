@@ -4,6 +4,7 @@ import { buildConcurPlan, evaluateReimbursement, suggestReceipt, suggestRequest 
 import { extractionScore, pageNeedsOcr, recognizeImage, recognizePdfPage, stopOcr } from "./ocr.js";
 
 import { imageCoverage, textFromItems } from "./extraction.js";
+import { cloudOcrConfiguration } from "./cloud-ocr.js";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL("./vendor/pdf.worker.mjs", import.meta.url).href;
 
@@ -13,6 +14,19 @@ let pdfUrl = "";
 const requestHintValues = new Map();
 const ids = ["request-id", "org-abbrev", "organization", "recipient", "submitter", "submitted-date", "requested-amount", "budget-amount", "budget-balance", "revenue-amount", "revenue-balance", "concur-month", "report-date", "gwid", "support-type", "request-verified", "parties-verified", "budget-verified", "revenue-verified", "concur-month-verified", "report-date-verified", "support-verified", "blank-gwid-confirmed"];
 const tagNames = ["food", "flowers", "ammunition", "gasoline", "transportation", "hotel"];
+
+cloudOcrConfiguration().then(config => {
+  if (!config) return;
+  $(".local-pill").textContent = "Google Cloud OCR · staff review required";
+  $("#files-title").parentElement.querySelector("p").textContent = "Scanned pages and receipt images are sent to Google Cloud Document AI for OCR. This service does not save case files; PDF assembly stays in your browser. Verify every suggestion.";
+  $("footer .wrap").textContent = "Preparation only. Nothing here creates, approves, submits, or pays a Concur expense report. Scanned pages and receipt images are processed by Google Cloud OCR; this service does not save case files.";
+});
+
+function scanDescription(scan) {
+  return scan.provider === "google-document-ai"
+    ? `Google Cloud OCR (${Math.round(scan.confidence)}% text confidence; unverified)`
+    : `Local OCR (${Math.round(scan.confidence)}% OCR confidence, layout ${scan.mode}${scan.rotation ? `, rotated ${scan.rotation}°` : ""})${scan.cloudError ? "; cloud unavailable, local fallback" : ""}`;
+}
 
 function showError(error) {
   const target = $("#fatal");
@@ -78,10 +92,11 @@ async function extractText(bytes, fileName, kind, force = false) {
               detail.ocrText = scan.text;
               detail.confidence = scan.confidence;
               detail.rotation = scan.rotation;
+              detail.cloudPages = scan.pages;
               const preferScan = force || coverage >= .20 || !directText.trim() || extractionScore(scan.text, kind) >= extractionScore(directText, kind);
               if (scan.text.trim() && scan.confidence >= 40 && preferScan) {
                 pageText = scan.text;
-                detail.method = `Local OCR (${Math.round(scan.confidence)}% OCR confidence, layout ${scan.mode}${scan.rotation ? `, rotated ${scan.rotation}°` : ""})`;
+                detail.method = scanDescription(scan);
               } else detail.method = `${directText.trim() ? "Selectable text retained" : "Manual entry needed"}; OCR checked (${Math.round(scan.confidence)}% OCR confidence)`;
               if (scan.confidence < 40) errors.push(`page ${index}: low OCR confidence; inspect the original`);
               if (!scan.text.trim()) errors.push(`page ${index}: no OCR text recognized`);
@@ -105,7 +120,7 @@ async function loadFile(file, kind = "receipt", force = false) {
     try {
       const result = await extractText(bytes, file.name, kind, force);
       extractedText = result.text; diagnostics = result.diagnostics;
-      note = `${diagnostics.length} page(s) inspected; ${diagnostics.filter((page) => page.ocrText !== undefined).length} checked with local OCR. Suggestions require verification.`;
+      note = `${diagnostics.length} page(s) inspected; ${diagnostics.filter((page) => page.ocrText !== undefined).length} checked with OCR. Suggestions require verification.`;
       if (result.errors.length) note += ` OCR needs manual review (${result.errors.join("; ")}).`;
       if (result.ocrLimitReached) note += " OCR is limited to 20 pages per file; inspect remaining pages manually.";
       if (result.truncated) note += " Only the first 60 pages were inspected.";
@@ -116,8 +131,8 @@ async function loadFile(file, kind = "receipt", force = false) {
     try {
       const result = await recognizeImage(file, (message) => ocrProgress(`${file.name}: ${message}`), kind);
       extractedText = result.confidence >= 40 ? result.text : "";
-      diagnostics = [{ page: 1, method: `Local OCR (${Math.round(result.confidence)}% OCR confidence, layout ${result.mode})`, text: extractedText, ocrText: result.text, directText: "" }];
-      note = extractedText.trim() ? "Local English OCR; verify every field against the original image." : "OCR found no text; inspect and enter facts manually.";
+      diagnostics = [{ page: 1, method: scanDescription(result), text: extractedText, ocrText: result.text, directText: "", cloudPages: result.pages }];
+      note = extractedText.trim() ? `${result.provider === "google-document-ai" ? "Google Cloud" : "Local English"} OCR; verify every field against the original image.` : "OCR found no text; inspect and enter facts manually.";
     } catch (error) { note = `OCR unavailable (${error.message}); inspect and enter facts manually.`; }
   } else note = "Supporting image: inspect visually; text is not required for extraction.";
   return { name: file.name, mime: file.type, bytes, sha256: hash, extractedText, note, diagnostics };
@@ -130,6 +145,9 @@ function appendExtraction(target, file) {
     details.className = "extracted-page";
     details.append(text("summary", `Page ${page.page} · ${page.method}`));
     details.append(text("pre", page.text || "No reliable text recognized. Inspect the original and enter facts manually.", "extracted-text"));
+    for (const cloudPage of page.cloudPages || []) {
+      if (cloudPage.quality) details.append(text("p", `Image quality: ${Math.round(cloudPage.quality.qualityScore * 100)}%. ${(cloudPage.quality.detectedDefects || []).map(defect => defect.type.replace("quality/defect_", "")).join(", ")}. This is not financial-field accuracy.`, "hint"));
+    }
     if (page.ocrText !== undefined && page.ocrText !== page.text) {
       const alternate = document.createElement("details");
       alternate.append(text("summary", "Compare selectable text and OCR"));

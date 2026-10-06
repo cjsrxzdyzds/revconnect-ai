@@ -1,0 +1,7 @@
+{
+  "name": "revconnect-document-ocr",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node server.mjs", "test": "node --test ../../tests/cloud-ocr.test.mjs" }
+}

@@ -1,0 +1,1610 @@
+{
+  "generatedAt": "2026-10-05T04:24:21.091Z",
+  "processor": "projects/220386098482/locations/us/processors/a705a771f39dc95f/processorVersions/pretrained-ocr-v2.1-2024-08-07",
+  "dataset": "ten synthetic receipts, five variants; not real-receipt accuracy",
+  "total": 50,
+  "completed": 50,
+  "exactMatches": 50,
+  "results": [
+    {
+      "id": "00-clear",
+      "variant": "clear",
+      "milliseconds": 1819,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.32124534375,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.79998624
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "81fbace3a31b2329f268af728578f70fdc1e4fd5d0103c90bd2642f096c7f8cd",
+      "verified": false
+    },
+    {
+      "id": "00-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1477,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.74277896875,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7610486
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "07ab0fb0192475f2b76c0358265f63c0b440b1b2465f0ece2b3eda9fff032c21",
+      "verified": false
+    },
+    {
+      "id": "00-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1549,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.8451041875,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6486697
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "5fdb8b07183ce462d549f2bc23229d3ab2120ca6943f81a1e3a260410adf2d15",
+      "verified": false
+    },
+    {
+      "id": "00-tilted",
+      "variant": "tilted",
+      "milliseconds": 1478,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.29348581250002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7264447
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "194c4d8ca4b9811fe48c64e5065a94e0bbcb87409c0b2a5aacde39b07022bbf1",
+      "verified": false
+    },
+    {
+      "id": "00-faint",
+      "variant": "faint",
+      "milliseconds": 1445,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.87243618750003,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7086557
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "4338e63bb468c169c1074f0b3ac3c1d292de8f8cd7cf72f0319a5f843ebd8dcc",
+      "verified": false
+    },
+    {
+      "id": "01-clear",
+      "variant": "clear",
+      "milliseconds": 1373,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.34686634375001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.80312216
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "fa20e36794898886b0d554672551654d24a399456613119f9c3051df48d2b098",
+      "verified": false
+    },
+    {
+      "id": "01-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1506,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.82919315625001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7422965
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "c799daaa3d458715aefe92ce80d2dade330533b24fa6d70991d5c97b10affe00",
+      "verified": false
+    },
+    {
+      "id": "01-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1405,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.7007541875,
+      "quality": [
+        {
+          "qualityScore": 0.97355723,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6365793
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "76662f4f37f1c35451f91656f0b873ea7b4bbc6055f74dd1047d5e25a19aeafa",
+      "verified": false
+    },
+    {
+      "id": "01-tilted",
+      "variant": "tilted",
+      "milliseconds": 1497,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.32039093750001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.73283845
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "8bb4b4c16c77973a24d19fdb62949409b9e17dd040890ec68c0c8921d58be385",
+      "verified": false
+    },
+    {
+      "id": "01-faint",
+      "variant": "faint",
+      "milliseconds": 1344,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.717866625,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7077641
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "12c7fe746bfa5bbe0edb9429366422bfee1b371964ed007092c9bf7d9b9b03bc",
+      "verified": false
+    },
+    {
+      "id": "02-clear",
+      "variant": "clear",
+      "milliseconds": 1444,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.29720234374997,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7909212
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "1cee88ce4a2b15943385b4761173e27534a58569bd538e27e885fadbd8b2e5b7",
+      "verified": false
+    },
+    {
+      "id": "02-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1349,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.76382000000001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7551382
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "20bf42ae9a24066af7f42b44edfa7546c45b2e39d8eb3c9bb4b52323688ac5aa",
+      "verified": false
+    },
+    {
+      "id": "02-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1525,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.9371573125,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.62512606
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "cb1a9fedbe77ee69a3b9b5c6a41afbfaee088a4a8314d23a0f841b32f67bdc04",
+      "verified": false
+    },
+    {
+      "id": "02-tilted",
+      "variant": "tilted",
+      "milliseconds": 1403,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.32994046875001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.756526
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "d3c59ad89f0681e362720e376326438adf63b433f53351325878bae715653020",
+      "verified": false
+    },
+    {
+      "id": "02-faint",
+      "variant": "faint",
+      "milliseconds": 1268,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.91870746875003,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.70833355
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "1ef945368e4d62a1aa2da44daf54f48c94df31b57456066afdca2f23801c8ff4",
+      "verified": false
+    },
+    {
+      "id": "03-clear",
+      "variant": "clear",
+      "milliseconds": 1249,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.38483281250001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7708861
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "e1eef7911ce02f7257b9a523f019a883a9718cc44ae38c56a204fc67f9a6d45a",
+      "verified": false
+    },
+    {
+      "id": "03-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1377,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.7953733125,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7666566
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "4a22eabd2c1c34a030acaf63df752b51661dfb2b6264b7b17524dca606f65e23",
+      "verified": false
+    },
+    {
+      "id": "03-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1318,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.90846678125,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6330594
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "16a66394274eb83bb79b582b1ea68d66c71b1bf07c940f12ec6187eaa227a53d",
+      "verified": false
+    },
+    {
+      "id": "03-tilted",
+      "variant": "tilted",
+      "milliseconds": 1592,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.38346159374997,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7370835
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "fb0a80f0d92c6d7f98f61f856dfe3434d6b5bb306dd023f11337b18ff00ad53a",
+      "verified": false
+    },
+    {
+      "id": "03-faint",
+      "variant": "faint",
+      "milliseconds": 1324,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.94053415625002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7096049
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "fce58d3b70556c7b81b7f62321887e206298d391e870311656904cbfe62240dd",
+      "verified": false
+    },
+    {
+      "id": "04-clear",
+      "variant": "clear",
+      "milliseconds": 1469,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.33996271875,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.80225664
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "6984320283c8444535f74e85f73f20e4260f8256c80a13f2ad153be905389f9d",
+      "verified": false
+    },
+    {
+      "id": "04-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1663,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.78297293750002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7874545
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "917f722c44dab5f5337320feb7535dd313e8fcebf6d72f75663e1ca699b22443",
+      "verified": false
+    },
+    {
+      "id": "04-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1769,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.7642428125,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6446729
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "0a83eb1a2c0689e8492e47f255fda0946d79e71f204c86c229cbe48eeff48811",
+      "verified": false
+    },
+    {
+      "id": "04-tilted",
+      "variant": "tilted",
+      "milliseconds": 1443,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.343464625,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.73833936
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "de70fe8255cce1b2a824fe55fba8df1f46571dc0e08d3ca395a04c592a7c265a",
+      "verified": false
+    },
+    {
+      "id": "04-faint",
+      "variant": "faint",
+      "milliseconds": 1447,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.94917587500002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7048477
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "f994157708288c39c6b0da0d61b1e6ff149ca7845c29a33688520870d98cf21e",
+      "verified": false
+    },
+    {
+      "id": "05-clear",
+      "variant": "clear",
+      "milliseconds": 1384,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.29403440624998,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.79746294
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "7d841fef6361f092ea4090996d3597f2a8f808b350611459e366d892116e3c58",
+      "verified": false
+    },
+    {
+      "id": "05-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1444,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.79155184375,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7614527
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "8858fc8b1e10e41ff9e03bbcc6233455a46fa23901bd8036d4fc9d9cb14939ae",
+      "verified": false
+    },
+    {
+      "id": "05-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1492,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.93712687500002,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6614285
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "92049b81d9c12093e83d911154129dcb041b600de8e610e1fceea6d12ec28f20",
+      "verified": false
+    },
+    {
+      "id": "05-tilted",
+      "variant": "tilted",
+      "milliseconds": 1499,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.37769387499998,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.71244663
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "83cd5e039f19af361460fea15a4307f6efe5b8f8d13c0f9324b5aaaa11a1ff13",
+      "verified": false
+    },
+    {
+      "id": "05-faint",
+      "variant": "faint",
+      "milliseconds": 1312,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.95439543750003,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.70918626
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "3844ffb894211e19de25d52bab576bfd098cdfbd2d1328e75b887d848944f3a7",
+      "verified": false
+    },
+    {
+      "id": "06-clear",
+      "variant": "clear",
+      "milliseconds": 1340,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.29920537499997,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.81193006
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "a8d305bc5defa356ba1f48d44c8b2faf53ec4130075569aac4d5036dd071db31",
+      "verified": false
+    },
+    {
+      "id": "06-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1435,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.84176140624999,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7460961
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "a4a0ef58fb7af9607fe971166840d6ef06a70ef987579edd6081f4008ac2e3e5",
+      "verified": false
+    },
+    {
+      "id": "06-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1433,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.86740087500002,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6640143
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "51caa2b8b1156b97a4f56ffb9d28c42a726263ff1df0a0675f9e45f8ccd442d0",
+      "verified": false
+    },
+    {
+      "id": "06-tilted",
+      "variant": "tilted",
+      "milliseconds": 1550,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.41118643749999,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7592543
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "8ab64124e3ffe68daf15e2ff5f0194670d521b205e9b3662f08f886a7e661c86",
+      "verified": false
+    },
+    {
+      "id": "06-faint",
+      "variant": "faint",
+      "milliseconds": 1271,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.96682387500002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7111216
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "0ce06baff45dc600af02edc067775bbf8f074895770f917984d8847ed63cc513",
+      "verified": false
+    },
+    {
+      "id": "07-clear",
+      "variant": "clear",
+      "milliseconds": 1374,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.33618400000002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.812848
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "77f136472fa2ea19f3a0c55649d986199845c5a421e782a5a866e233e614b141",
+      "verified": false
+    },
+    {
+      "id": "07-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1533,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.77663749999999,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7932374
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "f7814ee3a9059233ccc3c6a24875b91cb773faf21955fb71705448b71ac506bc",
+      "verified": false
+    },
+    {
+      "id": "07-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1639,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.97315937500002,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.64087486
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "ac15eea174fbd8287889052bf6b3f71ac2177cace62a1ed89ea6e34e83fa28ce",
+      "verified": false
+    },
+    {
+      "id": "07-tilted",
+      "variant": "tilted",
+      "milliseconds": 1458,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.30666409374997,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.751057
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "1ed344db02024d78aced8373afbaccbea8001d77ab2c67bed8c7d62aa115fb19",
+      "verified": false
+    },
+    {
+      "id": "07-faint",
+      "variant": "faint",
+      "milliseconds": 1466,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.90821031250002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.70972764
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "a2271aafdb8988e597522b687dbd537cddbf27eda2a5f0024bffc99209cc2af8",
+      "verified": false
+    },
+    {
+      "id": "08-clear",
+      "variant": "clear",
+      "milliseconds": 1369,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.38357862500001,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.82196075
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "d36ce7854be6b5b3a1da2e712b295c95679a9839dec7d924a43947a78fde2fe2",
+      "verified": false
+    },
+    {
+      "id": "08-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1389,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.82024043750002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7530593
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "2c7a5d864b914e40d0a2112f52e62fd77b55e24e033c1f88f42a4d2f5375deb4",
+      "verified": false
+    },
+    {
+      "id": "08-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1413,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.72751275,
+      "quality": [
+        {
+          "qualityScore": 0.97355723,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6430695
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "81c8b29b4d5d1d076d13b3626dc595c62897f8c6448f93924d37f7232c2170a8",
+      "verified": false
+    },
+    {
+      "id": "08-tilted",
+      "variant": "tilted",
+      "milliseconds": 1580,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.33593175,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.73613316
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "4cf845edb32d5e5438038f33682f231ef3e119ab62a315130a9aa8c79a2435e6",
+      "verified": false
+    },
+    {
+      "id": "08-faint",
+      "variant": "faint",
+      "milliseconds": 1378,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.925539125,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.71051145
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "67eff70365c868bde02704086645a9b261b98e57dbe8c427deda123a5d359af1",
+      "verified": false
+    },
+    {
+      "id": "09-clear",
+      "variant": "clear",
+      "milliseconds": 1351,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.31119934374999,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7869222
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "81c6528c1c4a3cbfc55ceb2ca80d52155b42ee506736d82cfb7110cad0877e05",
+      "verified": false
+    },
+    {
+      "id": "09-mild-blur",
+      "variant": "mild-blur",
+      "milliseconds": 1356,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.66721825,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7801317
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "5e8ab37c10f89c40ad1d4b056bbd7a5bb19a0e1533aea882fee84b4a8beb13f2",
+      "verified": false
+    },
+    {
+      "id": "09-severe-blur",
+      "variant": "severe-blur",
+      "milliseconds": 1473,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 95.819105875,
+      "quality": [
+        {
+          "qualityScore": 0.9806171,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.6470349
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "75c4169178ba2fb06ee99cacd01e9d0693379bb224ba1fc2817125059e6554c1",
+      "verified": false
+    },
+    {
+      "id": "09-tilted",
+      "variant": "tilted",
+      "milliseconds": 1375,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 98.25501584375,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.7351785
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "10fbbbe1d76362760f1e6b30b0c7704d4ff6973fc120f7fdbf57d6238befd2c6",
+      "verified": false
+    },
+    {
+      "id": "09-faint",
+      "variant": "faint",
+      "milliseconds": 1253,
+      "matches": {
+        "total": true,
+        "purchaseDate": true
+      },
+      "allFieldsMatch": true,
+      "confidence": 97.93294006250002,
+      "quality": [
+        {
+          "qualityScore": 0.9925582,
+          "detectedDefects": [
+            {
+              "type": "quality/defect_document_cutoff",
+              "confidence": 1
+            },
+            {
+              "type": "quality/defect_glare",
+              "confidence": 0.70920885
+            },
+            {
+              "type": "quality/defect_text_cutoff",
+              "confidence": 0.5
+            }
+          ]
+        }
+      ],
+      "sourceSha256": "5af08dcaf88680b8627469363235254ed4ad6e50a47822543fcfaa67dd81bddb",
+      "verified": false
+    }
+  ]
+}

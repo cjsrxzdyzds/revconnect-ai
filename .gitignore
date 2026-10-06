@@ -33,3 +33,5 @@ RevConnectAI_v5_API_Prototype/RevConnectAI_Knowledge_Base_v4.zip
 
 # Local OCR fixtures and rendered private source pages.
 /tmp/pdfs/
+/tmp/ocr-benchmark/
+/services/document-ocr/web/
