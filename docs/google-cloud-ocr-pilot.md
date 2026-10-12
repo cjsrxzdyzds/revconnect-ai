@@ -1,6 +1,24 @@
 # Google Cloud OCR pilot — updated 2026-10-05
 
-## Current status
+## Pause notice — 2026-10-12
+
+OCR development and live benchmarks are paused; budget planning takes priority.
+The public cloud workspace link has been removed. The resources listed below are
+historical deployment records. On 2026-10-12, after explicit deletion confirmation:
+
+- Cloud Run Services showed only `private-practice` and a service-deleted notice;
+  `revconnect-document-ocr` was absent.
+- Document AI US processors showed "No processors to display" after deletion of
+  `revconnect-ocr-pilot` (`a705a771f39dc95f`).
+- Artifact Registry showed only `private-practice`; `us-central1/revconnect-ai`
+  and its OCR images were absent after repository deletion.
+
+The shared project, other application, and OAuth configuration were preserved.
+Source code and benchmark results remain available locally. Historical charges,
+build-source storage, logs, and other project resources were not removed by this
+three-resource teardown; this is not a claim of zero total project billing.
+
+## Historical status
 
 Implemented a private Cloud Run OCR service in `services/document-ocr/` and
 repeatable synthetic benchmark scripts. Live Document AI evaluation completed

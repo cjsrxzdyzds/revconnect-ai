@@ -1,3 +1,4 @@
+import { planFunding } from './budget.js';
 import { dateNumber, formatDate, eventInterval, parseDiscoveryQuery, searchEvents, recommendGroups, foodStatus, costEvidence, eventNotes, discoveryIntent, timeZoneLabel, isEnglishQuery } from "./discovery.js";
 import { score, planningSources } from './retrieval.js?v=2026-09-29-4';
 
@@ -209,6 +210,7 @@ function copyTextButton(value, label) {
 }
 
 function estimateBudget(form) {
+  if (!form.checkValidity()) { form.reportValidity(); return; }
   const attendees = amount(form, "attendees");
   const food = new FormData(form).get("food");
   const assumption = state.data.budgetAssumptions.find((row) => row.item.startsWith(food === "meal" ? "Meal" : "Snacks"));
@@ -224,8 +226,15 @@ function estimateBudget(form) {
   const tax = food === "none" ? 0 : amount(form, "foodTax");
   const fees = delivery + service + tip + tax;
   const fixed = ["marketing", "venue", "speaker", "avTravel", "other"].reduce((sum, key) => sum + amount(form, key), 0) + fees;
-  const factor = 1 + amount(form, "contingency") / 100;
-  const totals = foodRates.map((rate) => ((quotedFood === null ? attendees * rate : quotedFood) + supplies + fixed) * factor);
+  const plans = foodRates.map(rate => planFunding({ items: [
+    { label: quotedFood === null ? "Food estimate" : "Food quote", quantity: quotedFood === null ? attendees : 1, unitCost: quotedFood === null ? rate : quotedFood },
+    { label: "Supplies", quantity: attendees, unitCost: amount(form, "supplies") },
+    ...["deliveryFees", "serviceFees", "foodTip", "foodTax"].map(key => ({ label: { deliveryFees: "Delivery", serviceFees: "Service fee", foodTip: "Tip", foodTax: "Quoted tax" }[key], unitCost: food === "none" ? 0 : amount(form, key) })),
+    ...["marketing", "venue", "speaker", "avTravel", "other"].map(key => ({ label: { marketing: "Marketing", venue: "Venue", speaker: "Speaker / performer", avTravel: "A/V and travel", other: "Other costs" }[key], unitCost: amount(form, key) })),
+  ], contingency: amount(form, "contingency"), available: amount(form, "available") }));
+  const plan = plans[1];
+  const totals = plans.map(item => item.totalCents / 100);
+  const confirmed = form.elements.costsConfirmed.checked && Boolean(form.elements.costEvidence.value.trim()) && (food === "none" || quotedFood !== null);
   const target = $("#budget-result");
   if (quotedFood === null) target.replaceChildren(node("strong", "", "Planning range · no vendor quote yet"), resultRow("Low estimate", totals[0]), resultRow("Typical estimate", totals[1], "money-total"), resultRow("High estimate", totals[2]));
   else target.replaceChildren(node("strong", "", "Actual quote entered"), resultRow("Menu subtotal", quotedFood), resultRow("Delivery", delivery), resultRow("Service fee", service), resultRow("Tip", tip), resultRow("Quoted tax", tax), resultRow("Food order total", quotedFood + fees), resultRow("Event planning total", totals[1], "money-total"));
@@ -235,13 +244,20 @@ function estimateBudget(form) {
   } else if (foodCap !== null && food !== "none") target.append(node("div", "cap-status cap-pending", `Food budget cap: ${preciseMoney(foodCap)} · add a quote to compare`));
   const foodNote = food === "none" ? "No food costs are included." : quotedFood === null ? "Food rates are planning assumptions; add an itemized quote to replace them." : `The entered food quote is ${attendees ? preciseMoney((quotedFood + fees) / attendees) : "unallocated"} per attendee before event contingency.`;
   target.append(node("p", "panel-note", `Includes ${preciseMoney(supplies)} in supplies, ${preciseMoney(fixed - fees)} in other entered costs, and ${amount(form, "contingency")}% contingency. ${foodNote} This is not a live vendor price.`));
-  const transfer = node("button", "copy-button transfer-button", "Use total in funding draft");
+  const fundingBrief = `ITEMIZED FUNDING PLAN\nStatus: ${confirmed ? "Costs confirmed by planner" : "Provisional estimate — confirm quotes before applying"}\n` + plan.lines.filter(line => line.totalCents).map(line => `${line.label}: ${line.quantity} × ${preciseMoney(line.unitCents / 100)} = ${preciseMoney(line.totalCents / 100)}`).join("\n") + `\nBase costs: ${preciseMoney(plan.baseCents / 100)}\nSeparate contingency: ${preciseMoney(plan.reserveCents / 100)}\nTotal: ${preciseMoney(plan.totalCents / 100)}\nConfirmed other funding: ${preciseMoney(plan.availableCents / 100)}\nNet funding needed: ${preciseMoney(plan.requestCents / 100)}\nEvidence: ${form.elements.costEvidence.value.trim() || "Quote references needed"}\nApply for the documented shortfall for this event. Confirm funding rules and deadlines; do not split requests to bypass limits. Approval is not guaranteed.`;
+  target.append(resultRow("Base costs", plan.baseCents / 100), resultRow("Separate contingency", plan.reserveCents / 100), resultRow("Confirmed other funding", plan.availableCents / 100), resultRow(confirmed ? "Documented funding shortfall" : "Provisional funding shortfall", plan.requestCents / 100, "money-total"));
+  const card = node("div", "brief-card");
+  card.append(node("strong", "", "Itemized funding plan"), node("div", "draft-text", fundingBrief), copyTextButton(fundingBrief, "Copy itemized plan"));
+  target.append(card);
+  const transfer = node("button", "copy-button transfer-button", confirmed ? "Use net request in funding draft" : "Confirm costs to use in funding draft");
   transfer.type = "button";
+  transfer.disabled = !confirmed;
   transfer.addEventListener("click", () => {
     const draft = $("#draft-form");
-    draft.elements.total.value = totals[1].toFixed(2);
+    draft.elements.total.value = (plan.totalCents / 100).toFixed(2);
+    draft.elements.requested.value = (plan.requestCents / 100).toFixed(2);
     draft.elements.attendance.value = String(attendees);
-    transfer.textContent = "Added to funding draft";
+    transfer.textContent = "Added total and net request to funding draft";
   });
   target.append(transfer);
   if (food !== "none") {
@@ -276,7 +292,7 @@ function makeDraft(form) {
   const attendance = Number(fields.attendance) || 0;
   const total = Number(fields.total) || 0;
   const requested = Number(fields.requested) || 0;
-  const draft = `Draft funding narrative\n\n${organization} requests ${money(requested)} from ${fields.source} to support ${fields.event}, planned for ${fields.date || "the proposed date"} at ${fields.location.trim() || "the proposed location"}.\n\nPurpose and student benefit\n${fields.purpose.trim()}\n\nAudience and reach\nThe program is intended for ${fields.audience.trim() || "GW students"} and is expected to serve approximately ${attendance} participants. Explain how it advances the organization's mission.\n\nBudget justification\nThe total estimated cost is ${money(total)}. Attach an itemized budget and vendor quotes when available. Explain each expense and identify any other funding sources.\n\nAccessibility and inclusion\n${fields.accessibility.trim() || "The organization will review accessibility, dietary, communication, and participation needs."}\n\nConfirm eligibility, deadlines, allowable costs, and the current submission process before applying. This draft does not imply approval.`;
+  const draft = `Draft funding narrative\n\n${organization} requests ${preciseMoney(requested)} from ${fields.source} to support ${fields.event}, planned for ${fields.date || "the proposed date"} at ${fields.location.trim() || "the proposed location"}.\n\nPurpose and student benefit\n${fields.purpose.trim()}\n\nAudience and reach\nThe program is intended for ${fields.audience.trim() || "GW students"} and is expected to serve approximately ${attendance} participants. Explain how it advances the organization's mission.\n\nBudget justification\nThe total estimated cost is ${preciseMoney(total)}. Attach an itemized budget and vendor quotes when available. Explain each expense and identify any other funding sources.\n\nAccessibility and inclusion\n${fields.accessibility.trim() || "The organization will review accessibility, dietary, communication, and participation needs."}\n\nConfirm eligibility, deadlines, allowable costs, and the current submission process before applying. This draft does not imply approval.`;
   const target = $("#draft-result");
   target.replaceChildren();
   if (requested > total) target.append(node("p", "", "Check the amounts: requested funding exceeds the total estimated cost."));

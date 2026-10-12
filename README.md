@@ -31,6 +31,30 @@ python3 -m venv .venv
 .venv/bin/python run_local.py --ui     # also serve the interface on 127.0.0.1:7899
 ```
 
+## Current priority — 2026-10-12
+
+Budget planning is the active priority. Invoice OCR development and cloud evaluation
+are paused. The public site no longer links to the GCP OCR workspace. The source
+and historical benchmarks are preserved for a later restart.
+
+The planner computes itemized amounts in cents, separates optional contingency
+(default 0%), subtracts confirmed other funding, and exports a net funding request.
+A quote reference and explicit confirmation are required before transferring the
+request to the funding draft. Food assumptions remain provisional until replaced
+by a vendor quote. User confirmation does not independently verify prices or policy.
+No approval probability is claimed and requests must not be split to evade limits.
+
+The guided workflow at `/planner/` covers descriptions, missing logistics, editable
+costs with evidence and payment dates, quote-based alternatives, and a copyable
+handoff / CSV. Funding, purchase preparation, and already-paid routes remain separate.
+Optional AI planning questions are enabled, behind verified free-account and shared
+daily-limit gates. Budget arithmetic runs locally; AI never supplies financial amounts.
+GCP billing-enabled services and trial credits do not meet the strict-free requirement.
+On 2026-10-12, the OCR Cloud Run service, Document AI processor, and dedicated
+Artifact Registry repository were verified absent in Google Cloud Console. The
+shared project and private-practice application remain. Historical charges and
+other project resources are outside this three-resource teardown.
+
 ## Cloudflare deployment
 
 The free web edition lives in `public/` and is configured as a Cloudflare Worker

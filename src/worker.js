@@ -1,3 +1,4 @@
+import { handlePlanning } from './planning-ai.js';
 import { handleAsk } from './free-ai.js';
 export { FreeAiBudget } from './free-ai.js';
 
@@ -89,6 +90,7 @@ function jsonResponse(body, status = 200, maxAge = 0) {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/planning') return handlePlanning(request, env);
     if (url.pathname === '/api/ocr/config') return jsonResponse({ enabled: false }, 200);
     if (url.pathname === '/api/ask') {
       return handleAsk(request, env, async () => {
